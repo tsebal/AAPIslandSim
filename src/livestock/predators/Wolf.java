@@ -1,4 +1,9 @@
-package livestock;
+package livestock.predators;
+
+import livestock.MoveDirection;
+import livestock.herbivores.Herbivore;
+
+import java.util.List;
 
 public class Wolf extends Predator {
     public static final int WEIGHT = 50;
@@ -8,4 +13,23 @@ public class Wolf extends Predator {
     private int foodSaturation = 0;
     public MoveDirection moveDirection = MoveDirection.randomDirection();
 
+    @Override
+    public void eat(List<Herbivore> herbivores) {
+
+    }
+
+    @Override
+    public void move() {
+
+    }
+
+    @Override
+    public void moveDirection() {
+
+    }
+
+    @Override
+    public void breed() {
+
+    }
 }
