@@ -24,6 +24,14 @@ public class Island {
         }
     }
 
+    public void refresh() {
+        for (int i = 0; i < islandMap.length; i++) {
+            for (int j = 0; j < islandMap[i].length; j++) {
+                islandMap[i][j].recalculate();
+            }
+        }
+    }
+
     public void print(){
         System.out.printf("Island dimensions: %dX%d \n", islandMap.length, islandMap[0].length);
         for (int i = 0; i < islandMap.length; i++) {

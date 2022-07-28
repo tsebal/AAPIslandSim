@@ -25,7 +25,10 @@ public class IslandProp {
                         "IslandSizeX = 1",
                         "IslandSizeY = 1",
                         "PlantPopulationMax = 200",
-                        "DeerPopulationMax = 20");
+                        "DeerPopulationMax = 20",
+                        "MousePopulationMax = 500",
+                        "FoxPopulationMax = 30",
+                        "WolfPopulationMax = 30");
                 Files.write(Paths.get(appConfigPath), configLines, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 System.out.println("Problems with creating settings file on filesSystem.");

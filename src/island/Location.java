@@ -1,9 +1,8 @@
 package island;
 
 import livestock.Plant;
-import livestock.herbivores.Deer;
-import livestock.herbivores.Herbivore;
-import livestock.predators.Predator;
+import livestock.herbivores.*;
+import livestock.predators.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,50 +17,77 @@ public class Location {
     Properties appProp;
     private int maxPlantPopulation;
     private int maxDeerPopulation;
+    private int maxMousePopulation;
+    private int maxFoxPopulation;
+    private int maxWolfPopulation;
 
-    List<Herbivore> herbivores = new ArrayList<>();
-    List<Predator> predators = new ArrayList<>();
-    List<Plant> plants = new ArrayList<>();
+    public int deerPopulation;
+    public int mousePopulation;
+    public int foxPopulation;
+    public int wolfPopulation;
+
+    public List<Herbivore> herbivores = new ArrayList<>();
+    public List<Predator> predators = new ArrayList<>();
+    public List<Plant> plants = new ArrayList<>();
 
     public Location(Properties appProp) {
         this.appProp = appProp;
         this.maxPlantPopulation = Integer.parseInt(appProp.getProperty("PlantPopulationMax"));
         this.maxDeerPopulation = Integer.parseInt(appProp.getProperty("DeerPopulationMax"));
+        this.maxMousePopulation = Integer.parseInt(appProp.getProperty("MousePopulationMax"));
+        this.maxFoxPopulation = Integer.parseInt(appProp.getProperty("FoxPopulationMax"));
+        this.maxWolfPopulation = Integer.parseInt(appProp.getProperty("WolfPopulationMax"));
         initialize();
     }
 
     //location livestock initialization
-    public void initialize() {
+    private void initialize() {
         int random = new Random().nextInt(maxPlantPopulation);
         for (int i = 0; i < random; i++) {
             plants.add(new Plant());
         }
-        random = new Random().nextInt(maxDeerPopulation);
-        for (int i = 0; i < random; i++) {
-            herbivores.add(new Deer());
+        deerPopulation = initializeHerbivores(new Deer(), maxDeerPopulation);
+        mousePopulation = initializeHerbivores(new Mouse(), maxMousePopulation);
+        foxPopulation = initializePredators(new Fox(this), maxFoxPopulation);
+        wolfPopulation = initializePredators(new Wolf(), maxWolfPopulation);
+
+    }
+
+    private int initializeHerbivores(Herbivore herbivore, int maxPopulation) {
+        int population = new Random().nextInt(maxPopulation);
+        for (int i = 0; i < population; i++) {
+            herbivores.add(herbivore);
         }
+        return population;
+    }
+
+    private int initializePredators(Predator predator, int maxPopulation) {
+        int population = new Random().nextInt(maxPopulation);
+        for (int i = 0; i < population; i++) {
+            predators.add(predator);
+        }
+        return population;
     }
 
     //events taking place in the location
     public void recalculate() {
 
-        // В ЦИКЛЕ ПЕРЕБИРАЕМ ХИЩНИКОВ ИЗ ЛИСТА
-        // И КАЖДОМУ ПО ОЧЕРЕДИ СУЕМ СПИСОК ТРАВОЯДНЫХ
+        //predators eats herbivores
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
             predator.eat(herbivores);
 
             // РАЗМНОЖАЕМСЯ
-            predator.breed();
+            //predator.breed();
 
             // ДВИГАЕМСЯ
-            predator.moveDirection();
+            //predator.moveDirection();
         }
 
-        // ТО ЖЕ САМОЕ ДЕЛАЕМ ДЛЯ ТРАВОЯДНЫХ
-
+        //herbivores eats plants, mouses, caterpillars
         for (int i = 0; i < herbivores.size(); i++) {
-            // ... //
+            Herbivore herbivore = herbivores.get(i);
+            herbivore.eat(plants);
         }
 
     }
@@ -70,8 +96,10 @@ public class Location {
     public String toString() {
         return "Location{" +
                 "herbivores=" + herbivores.size() +
-                ", predators=" + predators.size() +
-                ", plants=" + plants.size() +
+                ": Deers=" + deerPopulation + " | Mouses=" + mousePopulation +
+                "\n\t\t predators=" + predators.size() +
+                ": Foxes=" + foxPopulation + " | Wolves=" + wolfPopulation +
+                "\n\t\t plants=" + plants.size() +
                 '}';
     }
 }
