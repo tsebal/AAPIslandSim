@@ -1,7 +1,9 @@
 package livestock;
 
+import livestock.herbivores.Deer;
 import livestock.herbivores.Mouse;
 import livestock.predators.Fox;
+import livestock.predators.Wolf;
 
 import java.util.Random;
 
@@ -15,6 +17,11 @@ public class EatingChance {
         boolean result = false;
         if (eater instanceof Fox && victim instanceof Mouse) {
             if (getRandomChance() <= 90) {
+                result = true;
+            }
+        }
+        if (eater instanceof Wolf && victim instanceof Deer) {
+            if (getRandomChance() <= 15) {
                 result = true;
             }
         }

@@ -4,6 +4,7 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -46,25 +47,33 @@ public class Location {
         for (int i = 0; i < random; i++) {
             plants.add(new Plant());
         }
-        deerPopulation = initializeHerbivores(new Deer(), maxDeerPopulation);
-        mousePopulation = initializeHerbivores(new Mouse(), maxMousePopulation);
-        foxPopulation = initializePredators(new Fox(this), maxFoxPopulation);
-        wolfPopulation = initializePredators(new Wolf(), maxWolfPopulation);
+        deerPopulation = initializeHerbivores(Deer.class, maxDeerPopulation);
+        mousePopulation = initializeHerbivores(Mouse.class, maxMousePopulation);
+        foxPopulation = initializePredators(Fox.class, maxFoxPopulation);
+        wolfPopulation = initializePredators(Wolf.class, maxWolfPopulation);
 
     }
 
-    private int initializeHerbivores(Herbivore herbivore, int maxPopulation) {
+    private int initializeHerbivores(Class<?> herbivoreClass, int maxPopulation) {
         int population = new Random().nextInt(maxPopulation);
         for (int i = 0; i < population; i++) {
-            herbivores.add(herbivore);
+            try {
+                herbivores.add((Herbivore) herbivoreClass.getConstructor().newInstance());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return population;
     }
 
-    private int initializePredators(Predator predator, int maxPopulation) {
+    private int initializePredators(Class<?> predatorClass, int maxPopulation) {
         int population = new Random().nextInt(maxPopulation);
         for (int i = 0; i < population; i++) {
-            predators.add(predator);
+            try {
+                predators.add((Predator) predatorClass.getConstructor(Location.class).newInstance(this));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return population;
     }
@@ -96,10 +105,10 @@ public class Location {
     public String toString() {
         return "Location{" +
                 "herbivores=" + herbivores.size() +
-                ": Deers=" + deerPopulation + " | Mouses=" + mousePopulation +
-                "\n\t\t predators=" + predators.size() +
-                ": Foxes=" + foxPopulation + " | Wolves=" + wolfPopulation +
-                "\n\t\t plants=" + plants.size() +
-                '}';
+                ": \uD83E\uDD8CDeers=" + deerPopulation + " | \uD83D\uDC01Mouses=" + mousePopulation +
+                "\n\t\t\t  predators=" + predators.size() +
+                ": \uD83E\uDD8AFoxes=" + foxPopulation + " | \uD83D\uDC3AWolves=" + wolfPopulation +
+                "\n\t\t\t \uD83C\uDF3Fplants=" + plants.size() +
+                "}\n";
     }
 }

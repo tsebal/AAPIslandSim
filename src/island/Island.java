@@ -36,7 +36,7 @@ public class Island {
         System.out.printf("Island dimensions: %dX%d \n", islandMap.length, islandMap[0].length);
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
-                System.out.print(islandMap[i][j]);
+                System.out.print("[" + i + ":" + j + "]" + islandMap[i][j]);
             }
             System.out.println();
         }

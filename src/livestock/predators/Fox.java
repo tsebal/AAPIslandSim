@@ -25,8 +25,6 @@ public class Fox extends Predator {
 
     @Override
     public void eat(List<Herbivore> herbivores) {
-        boolean isEated;
-
         if (foodSaturation < MAX_FOOD_SATURATION) {
             for (Herbivore herbivore : herbivores) {
                 if (herbivore instanceof Mouse &&
@@ -38,6 +36,8 @@ public class Fox extends Predator {
                     return;
                 }
             }
+            System.out.println("Fox is hungry, no more herbivores there!");
+            foodSaturation -= 0.05f;
         }
     }
 

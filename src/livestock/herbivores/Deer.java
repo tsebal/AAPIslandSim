@@ -14,14 +14,14 @@ public class Deer extends Herbivore {
 
     @Override
     public void eat(List<Plant> plant) {
-        if (this.foodSaturation < MAX_FOOD_SATURATION) {
+        if (foodSaturation < MAX_FOOD_SATURATION) {
             if (!plant.isEmpty()) {
                 System.out.println("Deer eats Plant");
                 plant.remove(0);
-                this.foodSaturation += 1;    //неправильно считает насыщение, доработать
+                foodSaturation += 1;
             } else {
                 System.out.println("Deer is hungry, no more plants there!");
-                this.foodSaturation -= 1;
+                foodSaturation -= 1;
             }
         }
     }
