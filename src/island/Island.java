@@ -16,10 +16,17 @@ public class Island {
                                     [Integer.parseInt(appProp.getProperty("IslandSizeY"))];
     }
 
+    public Location[][] getIslandMap() {
+        return islandMap;
+    }
+
     public void initialize(){
+        int[] locationCoordinates = new int[2];
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
-                islandMap[i][j] = new Location(appProp);
+                locationCoordinates[0] = i;
+                locationCoordinates[1] = j;
+                islandMap[i][j] = new Location(appProp, islandMap, locationCoordinates);
             }
         }
     }

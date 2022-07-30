@@ -32,4 +32,9 @@ public class Bear extends Predator {
     public void breed() {
 
     }
+
+    @Override
+    public void isDied() {
+
+    }
 }

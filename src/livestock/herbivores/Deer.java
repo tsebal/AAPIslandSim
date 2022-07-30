@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
 
@@ -9,8 +10,13 @@ public class Deer extends Herbivore {
     public static final int WEIGHT = 300;
     public static final int MAX_AREA_MOVE_SPEED = 4;
     public static final int MAX_FOOD_SATURATION = 50;
-    private int foodSaturation = 40;
+    private int foodSaturation = 25;
     private MoveDirection moveDirection = MoveDirection.randomDirection();
+    Location location;
+
+    public Deer(Location location) {
+        this.location = location;
+    }
 
     @Override
     public void eat(List<Plant> plant) {
@@ -22,6 +28,7 @@ public class Deer extends Herbivore {
             } else {
                 System.out.println("Deer is hungry, no more plants there!");
                 foodSaturation -= 1;
+                isDied();
             }
         }
     }
@@ -39,5 +46,14 @@ public class Deer extends Herbivore {
     @Override
     public void breed() {
 
+    }
+
+    @Override
+    public void isDied() {
+        if (foodSaturation < 0) {
+            System.out.println("The deer died hungry.");
+            location.herbivores.remove(this);
+            location.deerPopulation -= 1;
+        }
     }
 }

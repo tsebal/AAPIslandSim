@@ -16,6 +16,8 @@ import java.util.Random;
  */
 public class Location {
     Properties appProp;
+    public Location[][] islandMap;
+    public int[] locationCoordinates;
     private int maxPlantPopulation;
     private int maxDeerPopulation;
     private int maxMousePopulation;
@@ -31,8 +33,10 @@ public class Location {
     public List<Predator> predators = new ArrayList<>();
     public List<Plant> plants = new ArrayList<>();
 
-    public Location(Properties appProp) {
+    public Location(Properties appProp, Location[][] islandMap, int[] locationCoordinates) {
         this.appProp = appProp;
+        this.islandMap = islandMap;
+        this.locationCoordinates = locationCoordinates;
         this.maxPlantPopulation = Integer.parseInt(appProp.getProperty("PlantPopulationMax"));
         this.maxDeerPopulation = Integer.parseInt(appProp.getProperty("DeerPopulationMax"));
         this.maxMousePopulation = Integer.parseInt(appProp.getProperty("MousePopulationMax"));
@@ -58,7 +62,7 @@ public class Location {
         int population = new Random().nextInt(maxPopulation);
         for (int i = 0; i < population; i++) {
             try {
-                herbivores.add((Herbivore) herbivoreClass.getConstructor().newInstance());
+                herbivores.add((Herbivore) herbivoreClass.getConstructor(Location.class).newInstance(this));
             } catch (Exception e) {
                 e.printStackTrace();
             }

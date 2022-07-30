@@ -10,4 +10,6 @@ public abstract class Animal {
     public abstract void moveDirection();
 
     public abstract void breed();
+
+    public abstract void isDied();
 }

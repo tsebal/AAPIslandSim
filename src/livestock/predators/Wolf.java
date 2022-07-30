@@ -16,7 +16,7 @@ public class Wolf extends Predator {
     public static final int WEIGHT = 50;
     public static final int MAX_AREA_MOVE_SPEED = 3;
     public static final int MAX_FOOD_SATURATION = 8;
-    private int foodSaturation = 5;
+    private int foodSaturation = 4;
     public MoveDirection moveDirection = MoveDirection.randomDirection();
     Location location;
 
@@ -39,6 +39,7 @@ public class Wolf extends Predator {
             }
             System.out.println("Wolf is hungry, no more herbivores there!");
             foodSaturation -= 1;
+            isDied();
         }
     }
 
@@ -55,5 +56,14 @@ public class Wolf extends Predator {
     @Override
     public void breed() {
 
+    }
+
+    @Override
+    public void isDied() {
+        if (foodSaturation < 0) {
+            System.out.println("The wolf died hungry.");
+            location.predators.remove(this);
+            location.wolfPopulation -= 1;
+        }
     }
 }
