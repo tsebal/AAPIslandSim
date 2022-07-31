@@ -1,10 +1,10 @@
 package island;
 
+import livestock.Animal;
 import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -17,7 +17,7 @@ import java.util.Random;
 public class Location {
     Properties appProp;
     public Location[][] islandMap;
-    public int[] locationCoordinates;
+    private int[] locationCoordinates;
     private int maxPlantPopulation;
     private int maxDeerPopulation;
     private int maxMousePopulation;
@@ -45,6 +45,10 @@ public class Location {
         initialize();
     }
 
+    public int[] getLocationCoordinates() {
+        return locationCoordinates;
+    }
+
     //location livestock initialization
     private void initialize() {
         int random = new Random().nextInt(maxPlantPopulation);
@@ -59,7 +63,7 @@ public class Location {
     }
 
     private int initializeHerbivores(Class<?> herbivoreClass, int maxPopulation) {
-        int population = new Random().nextInt(maxPopulation);
+        int population = new Random().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
                 herbivores.add((Herbivore) herbivoreClass.getConstructor(Location.class).newInstance(this));
@@ -71,7 +75,7 @@ public class Location {
     }
 
     private int initializePredators(Class<?> predatorClass, int maxPopulation) {
-        int population = new Random().nextInt(maxPopulation);
+        int population = new Random().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
                 predators.add((Predator) predatorClass.getConstructor(Location.class).newInstance(this));
@@ -94,7 +98,7 @@ public class Location {
             //predator.breed();
 
             // ДВИГАЕМСЯ
-            //predator.moveDirection();
+            predator.move();
         }
 
         //herbivores eats plants, mouses, caterpillars
@@ -103,6 +107,43 @@ public class Location {
             herbivore.eat(plants);
         }
 
+    }
+
+    public void animalLeave(Animal animal, String populationField) {
+        if (animal instanceof Predator) {
+            predators.remove(animal);
+        } else if (animal instanceof Herbivore) {
+            herbivores.remove(animal);
+        }
+        //changes population field in this location
+        try {
+            int locationAnimalPopulation = this.getClass().getDeclaredField(populationField).getInt(this);
+            System.out.println("Было здесь лис = " + locationAnimalPopulation);
+            this.getClass().getDeclaredField(populationField).setInt(this, locationAnimalPopulation - 1);
+            System.out.println("Стало здесь лис = " + this.foxPopulation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void animalArrive(Animal animal, int[] newCoordinates, String populationField) {
+        Location newLocation = islandMap[newCoordinates[0]][newCoordinates[1]];
+        if (animal instanceof Predator) {
+            newLocation.predators.add((Predator) animal);
+        } else if (animal instanceof Herbivore) {
+            newLocation.herbivores.add((Herbivore) animal);
+        }
+        //changes population field in new location
+        try {
+            int locationAnimalPopulation = newLocation.getClass().getDeclaredField(populationField).getInt(newLocation);
+            System.out.println("Было там лис = " + locationAnimalPopulation);
+            newLocation.getClass().getDeclaredField(populationField).setInt(newLocation, locationAnimalPopulation + 1);
+            System.out.println("Стало там лис = " + newLocation.getClass().getDeclaredField(populationField).getInt(newLocation));
+            animal.getClass().getDeclaredField("location").set(animal, newLocation);
+            System.out.println("Локация лисы новая: " + animal.getClass().getDeclaredField("location").get(animal));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
