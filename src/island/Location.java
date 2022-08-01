@@ -5,10 +5,8 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Location (one cell of the island) where the main action takes place.
@@ -16,13 +14,9 @@ import java.util.Random;
  */
 public class Location {
     Properties appProp;
-    public Location[][] islandMap;
+    private Location[][] islandMap;
     private int[] locationCoordinates;
-    private int maxPlantPopulation;
-    private int maxDeerPopulation;
-    private int maxMousePopulation;
-    private int maxFoxPopulation;
-    private int maxWolfPopulation;
+    private Map<String, Integer> maxPopulation = new HashMap<>();
 
     public int deerPopulation;
     public int mousePopulation;
@@ -37,11 +31,11 @@ public class Location {
         this.appProp = appProp;
         this.islandMap = islandMap;
         this.locationCoordinates = locationCoordinates;
-        this.maxPlantPopulation = Integer.parseInt(appProp.getProperty("PlantPopulationMax"));
-        this.maxDeerPopulation = Integer.parseInt(appProp.getProperty("DeerPopulationMax"));
-        this.maxMousePopulation = Integer.parseInt(appProp.getProperty("MousePopulationMax"));
-        this.maxFoxPopulation = Integer.parseInt(appProp.getProperty("FoxPopulationMax"));
-        this.maxWolfPopulation = Integer.parseInt(appProp.getProperty("WolfPopulationMax"));
+        this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
+        this.maxPopulation.put("maxDeerPopulation", Integer.parseInt(appProp.getProperty("DeerPopulationMax")));
+        this.maxPopulation.put("maxMousePopulation", Integer.parseInt(appProp.getProperty("MousePopulationMax")));
+        this.maxPopulation.put("maxFoxPopulation", Integer.parseInt(appProp.getProperty("FoxPopulationMax")));
+        this.maxPopulation.put("maxWolfPopulation", Integer.parseInt(appProp.getProperty("WolfPopulationMax")));
         initialize();
     }
 
@@ -49,21 +43,29 @@ public class Location {
         return locationCoordinates;
     }
 
+    public Location[][] getIslandMap() {
+        return islandMap;
+    }
+
+    public Map<String, Integer> getMaxPopulation() {
+        return maxPopulation;
+    }
+
     //location livestock initialization
     private void initialize() {
-        int random = new Random().nextInt(maxPlantPopulation);
+        int random = ThreadLocalRandom.current().nextInt(maxPopulation.get("maxPlantPopulation") + 1);
         for (int i = 0; i < random; i++) {
             plants.add(new Plant());
         }
-        deerPopulation = initializeHerbivores(Deer.class, maxDeerPopulation);
-        mousePopulation = initializeHerbivores(Mouse.class, maxMousePopulation);
-        foxPopulation = initializePredators(Fox.class, maxFoxPopulation);
-        wolfPopulation = initializePredators(Wolf.class, maxWolfPopulation);
+        deerPopulation = initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation"));
+        mousePopulation = initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation"));
+        foxPopulation = initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation"));
+        wolfPopulation = initializePredators(Wolf.class, maxPopulation.get("maxWolfPopulation"));
 
     }
 
     private int initializeHerbivores(Class<?> herbivoreClass, int maxPopulation) {
-        int population = new Random().nextInt(maxPopulation + 1);
+        int population = ThreadLocalRandom.current().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
                 herbivores.add((Herbivore) herbivoreClass.getConstructor(Location.class).newInstance(this));
@@ -75,7 +77,7 @@ public class Location {
     }
 
     private int initializePredators(Class<?> predatorClass, int maxPopulation) {
-        int population = new Random().nextInt(maxPopulation + 1);
+        int population = ThreadLocalRandom.current().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
                 predators.add((Predator) predatorClass.getConstructor(Location.class).newInstance(this));
@@ -92,13 +94,18 @@ public class Location {
         //predators eats herbivores
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
-            predator.eat(herbivores);
+            try {
+                if (!predator.getClass().getDeclaredField("isAlreadyTurned").getBoolean(predator)) {
 
-            // РАЗМНОЖАЕМСЯ
-            //predator.breed();
+                    predator.eat(herbivores);
+                    //predator.breed();
+                    predator.move();
 
-            // ДВИГАЕМСЯ
-            predator.move();
+                    predator.getClass().getDeclaredField("isAlreadyTurned").setBoolean(predator, false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         //herbivores eats plants, mouses, caterpillars
@@ -126,20 +133,18 @@ public class Location {
         }
     }
 
-    public void animalArrive(Animal animal, int[] newCoordinates, String populationField) {
-        Location newLocation = islandMap[newCoordinates[0]][newCoordinates[1]];
+    public void animalArrive(Animal animal, String populationField) {
         if (animal instanceof Predator) {
-            newLocation.predators.add((Predator) animal);
+            predators.add((Predator) animal);
         } else if (animal instanceof Herbivore) {
-            newLocation.herbivores.add((Herbivore) animal);
+            herbivores.add((Herbivore) animal);
         }
-        //changes population field in new location
+        //changes population field in new location, animal changes location
         try {
-            int locationAnimalPopulation = newLocation.getClass().getDeclaredField(populationField).getInt(newLocation);
+            int locationAnimalPopulation = this.getClass().getDeclaredField(populationField).getInt(this);
             System.out.println("Было там лис = " + locationAnimalPopulation);
-            newLocation.getClass().getDeclaredField(populationField).setInt(newLocation, locationAnimalPopulation + 1);
-            System.out.println("Стало там лис = " + newLocation.getClass().getDeclaredField(populationField).getInt(newLocation));
-            animal.getClass().getDeclaredField("location").set(animal, newLocation);
+            this.getClass().getDeclaredField(populationField).setInt(this, locationAnimalPopulation + 1);
+            System.out.println("Стало там лис = " + this.getClass().getDeclaredField(populationField).getInt(this));
             System.out.println("Локация лисы новая: " + animal.getClass().getDeclaredField("location").get(animal));
         } catch (Exception e) {
             e.printStackTrace();

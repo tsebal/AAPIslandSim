@@ -8,7 +8,7 @@ import java.util.Properties;
  */
 public class Island {
     Properties appProp;
-    Location[][] islandMap;
+    private Location[][] islandMap;
 
     public Island(Properties appProp) {
         this.appProp = appProp;
@@ -16,16 +16,11 @@ public class Island {
                                     [Integer.parseInt(appProp.getProperty("IslandSizeY"))];
     }
 
-    public Location[][] getIslandMap() {
-        return islandMap;
-    }
-
     public void initialize(){
-        int[] locationCoordinates = new int[2];
+        int[] locationCoordinates;
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
-                locationCoordinates[0] = i;
-                locationCoordinates[1] = j;
+                locationCoordinates = new int[]{i, j};
                 islandMap[i][j] = new Location(appProp, islandMap, locationCoordinates);
             }
         }

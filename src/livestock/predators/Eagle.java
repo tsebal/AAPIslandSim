@@ -11,7 +11,6 @@ public class Eagle extends Predator {
     public static final int MAX_AREA_MOVE_SPEED = 3;
     public static final int MAX_FOOD_SATURATION = 1;
     private int foodSaturation = 0;
-    private MoveDirection moveDirection = MoveDirection.randomDirection();
 
     @Override
     public void eat(List<Herbivore> herbivores) {

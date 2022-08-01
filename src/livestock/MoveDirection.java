@@ -1,9 +1,12 @@
 package livestock;
 
+import island.Location;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Enum of animal movement direction on island.
@@ -16,13 +19,32 @@ public enum MoveDirection {
 
     private static final List<MoveDirection> DIRECTION =
             Collections.unmodifiableList(Arrays.asList(values()));
-    private static final Random RANDOM = new Random();
 
     /**
      * Randomly picks direction for movement from 4-way.
-     * @return a random direction of movement
+     * @return a new Location for movement.
      */
-    public static MoveDirection randomDirection() {
-        return DIRECTION.get(RANDOM.nextInt(4));
+    public static Location getNewLocation(Location location) {
+        MoveDirection moveDirection = DIRECTION.get(ThreadLocalRandom.current().nextInt(4));
+        Location newLocation = location;
+        int[] oldCoordinates = location.getLocationCoordinates();
+        if (moveDirection == MoveDirection.UP) {
+            if (oldCoordinates[1] > 0) {
+                newLocation = location.getIslandMap()[oldCoordinates[0]][oldCoordinates[1] - 1];
+            }
+        } else if (moveDirection == MoveDirection.RIGHT) {
+            if (oldCoordinates[0] < location.getIslandMap().length - 1) {
+                newLocation = location.getIslandMap()[oldCoordinates[0] + 1][oldCoordinates[1]];
+            }
+        } else if (moveDirection == MoveDirection.DOWN) {
+            if (oldCoordinates[1] < location.getIslandMap()[0].length - 1) {
+                newLocation = location.getIslandMap()[oldCoordinates[0]][oldCoordinates[1] + 1];
+            }
+        } else if (moveDirection == MoveDirection.LEFT) {
+            if (oldCoordinates[0] > 0) {
+                newLocation = location.getIslandMap()[oldCoordinates[0] - 1][oldCoordinates[1]];
+            }
+        }
+        return newLocation;
     }
 }

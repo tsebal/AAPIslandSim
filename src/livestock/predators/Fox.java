@@ -16,9 +16,9 @@ public class Fox extends Predator {
     public static final int WEIGHT = 8;
     public static final int MAX_AREA_MOVE_SPEED = 2;
     public static final int MAX_FOOD_SATURATION = 2;
-    private Location location;
+    public Location location;
     private float foodSaturation = 1f; //MAX_FOOD_SATURATION;
-    private MoveDirection moveDirection;
+    public boolean isAlreadyTurned;
 
     public Fox(Location location) {
         this.location = location;
@@ -50,41 +50,27 @@ public class Fox extends Predator {
             System.out.println("Лиса делает " + (i + 1) + " ход");
             moveDirection();
         }
-
+        foodSaturation -= 0.05f;
+        isAlreadyTurned = true;
+        isDied();
     }
 
     @Override
     public void moveDirection() {
-        moveDirection = MoveDirection.randomDirection();
         int[] thisCoordinates = location.getLocationCoordinates();
-        int[] newCoordinates = location.getLocationCoordinates();
+        Location newLocation = MoveDirection.getNewLocation(location);
+
         System.out.println(thisCoordinates[0] + "|" + thisCoordinates[1] + " коорд лисы старые");
-        if (moveDirection == MoveDirection.UP) {
-            if (thisCoordinates[1] > 0) {
+
+        if (newLocation != location &&
+                newLocation.foxPopulation < newLocation.getMaxPopulation().get("maxFoxPopulation")) {
                 location.animalLeave(this, "foxPopulation");
-                newCoordinates[1] = newCoordinates[1] - 1;
-                location.animalArrive(this, newCoordinates, "foxPopulation");
-            }
-        } else if (moveDirection == MoveDirection.RIGHT) {
-            if (thisCoordinates[0] < location.islandMap.length - 1) {
-                location.animalLeave(this, "foxPopulation");
-                newCoordinates[0] = newCoordinates[0] + 1;
-                location.animalArrive(this, newCoordinates, "foxPopulation");
-            }
-        } else if (moveDirection == MoveDirection.DOWN) {
-            if (thisCoordinates[1] < location.islandMap[0].length - 1) {
-                location.animalLeave(this, "foxPopulation");
-                newCoordinates[1] = newCoordinates[1] + 1;
-                location.animalArrive(this, newCoordinates, "foxPopulation");
-            }
-        } else if (moveDirection == MoveDirection.LEFT) {
-            if (thisCoordinates[0] > 0) {
-                location.animalLeave(this, "foxPopulation");
-                newCoordinates[0] = newCoordinates[0] - 1;
-                location.animalArrive(this, newCoordinates, "foxPopulation");
-            }
+                this.location = newLocation;
+                newLocation.animalArrive(this, "foxPopulation");
+
         }
-        System.out.println(newCoordinates[0] + "|" + newCoordinates[1] + " коорд лисы новые");
+
+        System.out.println(this.location.getLocationCoordinates()[0] + "|" + this.location.getLocationCoordinates()[1] + " коорд лисы новые");
     }
 
     @Override

@@ -2,10 +2,8 @@ package livestock.predators;
 
 import island.Location;
 import livestock.EatingChance;
-import livestock.MoveDirection;
 import livestock.herbivores.Deer;
 import livestock.herbivores.Herbivore;
-import livestock.herbivores.Mouse;
 
 import java.util.List;
 
@@ -17,8 +15,8 @@ public class Wolf extends Predator {
     public static final int MAX_AREA_MOVE_SPEED = 3;
     public static final int MAX_FOOD_SATURATION = 8;
     private int foodSaturation = 4;
-    public MoveDirection moveDirection = MoveDirection.randomDirection();
     Location location;
+    public boolean isAlreadyTurned;
 
     public Wolf(Location location) {
         this.location = location;

@@ -11,8 +11,8 @@ public class Deer extends Herbivore {
     public static final int MAX_AREA_MOVE_SPEED = 4;
     public static final int MAX_FOOD_SATURATION = 50;
     private int foodSaturation = 25;
-    private MoveDirection moveDirection = MoveDirection.randomDirection();
     Location location;
+    public boolean isAlreadyTurned;
 
     public Deer(Location location) {
         this.location = location;

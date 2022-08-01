@@ -14,8 +14,8 @@ public class Mouse extends Herbivore {
     public static final int MAX_AREA_MOVE_SPEED = 1;
     public static final float MAX_FOOD_SATURATION = 0.01f;
     private float foodSaturation = 0.005f;
-    private MoveDirection moveDirection = MoveDirection.randomDirection();
     Location location;
+    public boolean isAlreadyTurned;
 
     public Mouse(Location location) {
         this.location = location;
