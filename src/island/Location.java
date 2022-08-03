@@ -5,6 +5,7 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,11 +18,7 @@ public class Location {
     private Location[][] islandMap;
     private int[] locationCoordinates;
     private Map<String, Integer> maxPopulation = new HashMap<>();
-
-    public int deerPopulation;
-    public int mousePopulation;
-    public int foxPopulation;
-    public int wolfPopulation;
+    private Map<String, Integer> population = new HashMap<>();
 
     public List<Herbivore> herbivores = new ArrayList<>();
     public List<Predator> predators = new ArrayList<>();
@@ -51,17 +48,28 @@ public class Location {
         return maxPopulation;
     }
 
+    public Map<String, Integer> getPopulation() {
+        return population;
+    }
+
+    public void changePopulation(String populationType, int quantity) {
+        population.computeIfPresent(populationType, (key, value) -> Integer.valueOf(value + quantity));
+    }
+
     //location livestock initialization
     private void initialize() {
         int random = ThreadLocalRandom.current().nextInt(maxPopulation.get("maxPlantPopulation") + 1);
         for (int i = 0; i < random; i++) {
             plants.add(new Plant());
         }
-        deerPopulation = initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation"));
-        mousePopulation = initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation"));
-        foxPopulation = initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation"));
-        wolfPopulation = initializePredators(Wolf.class, maxPopulation.get("maxWolfPopulation"));
-
+        population.put("deerPopulation",
+                initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation")));
+        population.put("mousePopulation",
+                initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation")));
+        population.put("foxPopulation",
+                initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation")));
+        population.put("wolfPopulation",
+                initializePredators(Wolf.class, maxPopulation.get("maxWolfPopulation")));
     }
 
     private int initializeHerbivores(Class<?> herbivoreClass, int maxPopulation) {
@@ -94,70 +102,54 @@ public class Location {
         //predators eats herbivores
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
-            try {
-                if (!predator.getClass().getDeclaredField("isAlreadyTurned").getBoolean(predator)) {
-
-                    predator.eat(herbivores);
-                    //predator.breed();
-                    predator.move();
-
-                    predator.getClass().getDeclaredField("isAlreadyTurned").setBoolean(predator, false);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            int predatorCase = ThreadLocalRandom.current().nextInt(3);
+            switch (predatorCase) {
+                case 0 -> predator.breed();
+                case 1 -> predator.eat(herbivores);
+                case 2 -> predator.move();
             }
         }
 
         //herbivores eats plants, mouses, caterpillars
         for (int i = 0; i < herbivores.size(); i++) {
             Herbivore herbivore = herbivores.get(i);
-            herbivore.eat(plants);
+            int herbivoreCase = ThreadLocalRandom.current().nextInt(3);
+            switch (herbivoreCase) {
+                case 0 -> herbivore.breed();
+                case 1 -> herbivore.eat(plants);
+                case 2 -> herbivore.move();
+            }
         }
 
     }
 
-    public void animalLeave(Animal animal, String populationField) {
+    public void animalLeave(Animal animal, String populationType) {
         if (animal instanceof Predator) {
             predators.remove(animal);
         } else if (animal instanceof Herbivore) {
             herbivores.remove(animal);
         }
-        //changes population field in this location
-        try {
-            int locationAnimalPopulation = this.getClass().getDeclaredField(populationField).getInt(this);
-            System.out.println("Было здесь лис = " + locationAnimalPopulation);
-            this.getClass().getDeclaredField(populationField).setInt(this, locationAnimalPopulation - 1);
-            System.out.println("Стало здесь лис = " + this.foxPopulation);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changePopulation(populationType, -1);
     }
 
-    public void animalArrive(Animal animal, String populationField) {
+    public void animalArrive(Animal animal, String populationType) {
         if (animal instanceof Predator) {
             predators.add((Predator) animal);
         } else if (animal instanceof Herbivore) {
             herbivores.add((Herbivore) animal);
         }
-        //changes population field in new location, animal changes location
-        try {
-            int locationAnimalPopulation = this.getClass().getDeclaredField(populationField).getInt(this);
-            System.out.println("Было там лис = " + locationAnimalPopulation);
-            this.getClass().getDeclaredField(populationField).setInt(this, locationAnimalPopulation + 1);
-            System.out.println("Стало там лис = " + this.getClass().getDeclaredField(populationField).getInt(this));
-            System.out.println("Локация лисы новая: " + animal.getClass().getDeclaredField("location").get(animal));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changePopulation(populationType, +1);
     }
 
     @Override
     public String toString() {
         return "Location{" +
                 "herbivores=" + herbivores.size() +
-                ": \uD83E\uDD8CDeers=" + deerPopulation + " | \uD83D\uDC01Mouses=" + mousePopulation +
+                ": \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
+                " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
                 "\n\t\t\t  predators=" + predators.size() +
-                ": \uD83E\uDD8AFoxes=" + foxPopulation + " | \uD83D\uDC3AWolves=" + wolfPopulation +
+                ": \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
+                " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +
                 "\n\t\t\t \uD83C\uDF3Fplants=" + plants.size() +
                 "}\n";
     }

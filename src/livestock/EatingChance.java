@@ -6,6 +6,7 @@ import livestock.predators.Fox;
 import livestock.predators.Wolf;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Determines the chance of an animal eating food that suits it.
@@ -20,8 +21,11 @@ public class EatingChance {
                 result = true;
             }
         }
-        if (eater instanceof Wolf && victim instanceof Deer) {
-            if (getRandomChance() <= 15) {
+        if (eater instanceof Wolf) {
+            if (victim instanceof Deer && getRandomChance() <= 15) {
+                result = true;
+            }
+            if (victim instanceof Mouse && getRandomChance() <= 80) {
                 result = true;
             }
         }
@@ -29,6 +33,6 @@ public class EatingChance {
     }
 
     private static int getRandomChance() {
-        return new Random().nextInt(100);
+        return ThreadLocalRandom.current().nextInt(100 + 1);
     }
 }
