@@ -8,20 +8,30 @@ import livestock.herbivores.Herbivore;
 import livestock.herbivores.Mouse;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Wolf chance eats: Horse 10%, Deer 15%, Rabbit 60%, Mouse 80%, Goat 60%, Sheep 70%, Boar 15%, Buffalo 10%, Duck 40%
  */
 public class Wolf extends Predator {
-    public static final int WEIGHT = 50;
-    public static final int MAX_AREA_MOVE_SPEED = 3;
-    public static final int MAX_FOOD_SATURATION = 8;
+    private final Properties appProp;
     private Location location;
-    private float foodSaturation = 4f;
+    private static int WEIGHT;
+    private static int MAX_AREA_MOVE_SPEED;
+    private static int MAX_FOOD_SATURATION;
+    private static int BREED_FACTOR;
+    private float foodSaturation;
+    private boolean isMoved;
 
-    public Wolf(Location location) {
+    public Wolf(Location location, Properties appProp) {
+        this.appProp = appProp;
         this.location = location;
+        WEIGHT = Integer.parseInt(appProp.getProperty("WolfWeight"));
+        MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("WolfAreaMoveSpeed"));
+        MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("WolfFoodSaturationMax"));
+        BREED_FACTOR = Integer.parseInt(appProp.getProperty("WolfBreedFactor"));
+        this.foodSaturation = Float.parseFloat(appProp.getProperty("WolfFoodSaturation"));
     }
 
     @Override
@@ -74,9 +84,9 @@ public class Wolf extends Predator {
     @Override
     public void breed() {
         int locationWolfPopulation = location.getPopulation().get("wolfPopulation");
-        if (locationWolfPopulation / 10 >= 2 &&
+        if (locationWolfPopulation / BREED_FACTOR >= 2 &&
                 locationWolfPopulation < location.getMaxPopulation().get("maxWolfPopulation")) {
-            location.animalArrive(new Wolf(location), "wolfPopulation");
+            location.animalArrive(new Wolf(location, appProp), "wolfPopulation");
             System.out.println("A new wolf was born.");
         } else {
             System.out.println("The wolf could not breed.");

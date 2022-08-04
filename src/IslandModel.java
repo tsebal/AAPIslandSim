@@ -8,7 +8,6 @@ import java.util.Properties;
 public class IslandModel {
     public static void main(String[] args) {
         System.out.println("Welcome to Animal And Plant Island Simulator!");
-        IslandProp.init();
         Properties appProp = IslandProp.load();
         Island island = new Island(appProp);
         island.initialize();

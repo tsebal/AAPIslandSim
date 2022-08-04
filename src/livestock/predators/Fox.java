@@ -7,21 +7,30 @@ import livestock.herbivores.Herbivore;
 import livestock.herbivores.Mouse;
 
 import java.util.List;
-import java.util.Random;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Fox chance eats: Rabbit 70%, Mouse 90%, Duck 60%, Caterpillar 40%
  */
 public class Fox extends Predator {
-    public static final int WEIGHT = 8;
-    public static final int MAX_AREA_MOVE_SPEED = 2;
-    public static final int MAX_FOOD_SATURATION = 2;
+    private final Properties appProp;
     private Location location;
-    private float foodSaturation = 1f;
+    private static int WEIGHT;
+    private static int MAX_AREA_MOVE_SPEED;
+    private static int MAX_FOOD_SATURATION;
+    private static int BREED_FACTOR;
+    private float foodSaturation;
+    private boolean isMoved;
 
-    public Fox(Location location) {
+    public Fox(Location location, Properties appProp) {
+        this.appProp = appProp;
         this.location = location;
+        WEIGHT = Integer.parseInt(appProp.getProperty("FoxWeight"));
+        MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("FoxAreaMoveSpeed"));
+        MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("FoxFoodSaturationMax"));
+        BREED_FACTOR = Integer.parseInt(appProp.getProperty("FoxBreedFactor"));
+        this.foodSaturation = Float.parseFloat(appProp.getProperty("FoxFoodSaturation"));
     }
 
     @Override
@@ -68,9 +77,9 @@ public class Fox extends Predator {
     @Override
     public void breed() {
         int locationFoxPopulation = location.getPopulation().get("foxPopulation");
-        if (locationFoxPopulation / 10 >= 2 &&
+        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxFoxPopulation")) {
-            location.animalArrive(new Fox(location), "foxPopulation");
+            location.animalArrive(new Fox(location, appProp), "foxPopulation");
             System.out.println("A new fox was born.");
         } else {
             System.out.println("The fox could not breed.");

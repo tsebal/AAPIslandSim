@@ -1,6 +1,5 @@
 package livestock.predators;
 
-import livestock.MoveDirection;
 import livestock.herbivores.Herbivore;
 
 import java.util.List;

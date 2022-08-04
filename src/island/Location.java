@@ -5,7 +5,6 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -53,7 +52,7 @@ public class Location {
     }
 
     public void changePopulation(String populationType, int quantity) {
-        population.computeIfPresent(populationType, (key, value) -> Integer.valueOf(value + quantity));
+        population.computeIfPresent(populationType, (key, value) -> (value + quantity));
     }
 
     //location livestock initialization
@@ -76,7 +75,9 @@ public class Location {
         int population = ThreadLocalRandom.current().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
-                herbivores.add((Herbivore) herbivoreClass.getConstructor(Location.class).newInstance(this));
+                herbivores.add((Herbivore) herbivoreClass
+                        .getConstructor(Location.class, Properties.class)
+                        .newInstance(this, this.appProp));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -88,7 +89,9 @@ public class Location {
         int population = ThreadLocalRandom.current().nextInt(maxPopulation + 1);
         for (int i = 0; i < population; i++) {
             try {
-                predators.add((Predator) predatorClass.getConstructor(Location.class).newInstance(this));
+                predators.add((Predator) predatorClass
+                        .getConstructor(Location.class, Properties.class)
+                        .newInstance(this, this.appProp));
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -5,7 +5,6 @@ import livestock.herbivores.Mouse;
 import livestock.predators.Fox;
 import livestock.predators.Wolf;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

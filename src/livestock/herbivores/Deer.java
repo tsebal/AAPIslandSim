@@ -5,17 +5,27 @@ import livestock.MoveDirection;
 import livestock.Plant;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Deer extends Herbivore {
-    public static final int WEIGHT = 300;
-    public static final int MAX_AREA_MOVE_SPEED = 4;
-    public static final int MAX_FOOD_SATURATION = 50;
+    private final Properties appProp;
     private Location location;
-    private int foodSaturation = 25;
+    private static int WEIGHT;
+    private static int MAX_AREA_MOVE_SPEED;
+    private static int MAX_FOOD_SATURATION;
+    private static int BREED_FACTOR;
+    private int foodSaturation;
+    private boolean isMoved;
 
-    public Deer(Location location) {
+    public Deer(Location location, Properties appProp) {
+        this.appProp = appProp;
         this.location = location;
+        WEIGHT = Integer.parseInt(appProp.getProperty("DeerWeight"));
+        MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("DeerAreaMoveSpeed"));
+        MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("DeerFoodSaturationMax"));
+        BREED_FACTOR = Integer.parseInt(appProp.getProperty("DeerBreedFactor"));
+        this.foodSaturation = Integer.parseInt(appProp.getProperty("DeerFoodSaturation"));
     }
 
     @Override
@@ -59,9 +69,9 @@ public class Deer extends Herbivore {
     @Override
     public void breed() {
         int locationFoxPopulation = location.getPopulation().get("deerPopulation");
-        if (locationFoxPopulation / 6 >= 2 &&
+        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxDeerPopulation")) {
-            location.animalArrive(new Deer(location), "deerPopulation");
+            location.animalArrive(new Deer(location, appProp), "deerPopulation");
             System.out.println("A new deer was born.");
         } else {
             System.out.println("The deer could not breed.");

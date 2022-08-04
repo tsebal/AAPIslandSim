@@ -5,20 +5,30 @@ import livestock.MoveDirection;
 import livestock.Plant;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Mouse chance eats: Caterpillar 90%, Plant 100%
  */
 public class Mouse extends Herbivore {
-    public static final float WEIGHT = 0.05f;
-    public static final int MAX_AREA_MOVE_SPEED = 1;
-    public static final float MAX_FOOD_SATURATION = 0.01f;
+    private final Properties appProp;
     private Location location;
-    private float foodSaturation = 0.005f;
+    private static float WEIGHT;
+    private static int MAX_AREA_MOVE_SPEED;
+    private static float MAX_FOOD_SATURATION;
+    private static int BREED_FACTOR;
+    private float foodSaturation;
+    private boolean isMoved;
 
-    public Mouse(Location location) {
+    public Mouse(Location location, Properties appProp) {
+        this.appProp = appProp;
         this.location = location;
+        WEIGHT = Float.parseFloat(appProp.getProperty("MouseWeight"));
+        MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("MouseAreaMoveSpeed"));
+        MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("MouseFoodSaturationMax"));
+        BREED_FACTOR = Integer.parseInt(appProp.getProperty("MouseBreedFactor"));
+        this.foodSaturation = Float.parseFloat(appProp.getProperty("MouseFoodSaturation"));
     }
 
     @Override
@@ -62,9 +72,9 @@ public class Mouse extends Herbivore {
     @Override
     public void breed() {
         int locationFoxPopulation = location.getPopulation().get("mousePopulation");
-        if (locationFoxPopulation / 100 >= 2 &&
+        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxMousePopulation")) {
-            location.animalArrive(new Mouse(location), "mousePopulation");
+            location.animalArrive(new Mouse(location, appProp), "mousePopulation");
             System.out.println("A new mouse was born.");
         } else {
             System.out.println("The mouse could not breed.");
