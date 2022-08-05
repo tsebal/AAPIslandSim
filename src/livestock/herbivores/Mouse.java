@@ -3,6 +3,7 @@ package livestock.herbivores;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
+import livestock.predators.Wolf;
 
 import java.util.List;
 import java.util.Properties;
@@ -19,7 +20,7 @@ public class Mouse extends Herbivore {
     private static float MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    private boolean isMoved;
+    public boolean isMoved;
 
     public Mouse(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -53,7 +54,8 @@ public class Mouse extends Herbivore {
             System.out.println("Mouse moves " + (i + 1) + " times");
             moveDirection();
         }
-        foodSaturation -= 0.01f;
+        isMoved = true;
+        foodSaturation -= 0.005f;
         isDied();
     }
 
@@ -74,7 +76,9 @@ public class Mouse extends Herbivore {
         int locationFoxPopulation = location.getPopulation().get("mousePopulation");
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxMousePopulation")) {
-            location.animalArrive(new Mouse(location, appProp), "mousePopulation");
+            Mouse newMouse = new Mouse(location, appProp);
+            newMouse.isMoved = true;
+            location.animalArrive(newMouse, "mousePopulation");
             System.out.println("A new mouse was born.");
         } else {
             System.out.println("The mouse could not breed.");

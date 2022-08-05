@@ -12,7 +12,9 @@ public class IslandModel {
         Island island = new Island(appProp);
         island.initialize();
         island.print();
-        island.refresh();
-        island.print();
+        for (int i = 0; i < 10; i++) {
+            island.refresh();
+            island.print();
+        }
     }
 }

@@ -3,6 +3,7 @@ package livestock.herbivores;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
+import livestock.predators.Wolf;
 
 import java.util.List;
 import java.util.Properties;
@@ -16,7 +17,7 @@ public class Deer extends Herbivore {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private int foodSaturation;
-    private boolean isMoved;
+    public boolean isMoved;
 
     public Deer(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -50,6 +51,7 @@ public class Deer extends Herbivore {
             System.out.println("Deer moves " + (i + 1) + " times");
             moveDirection();
         }
+        isMoved = true;
         foodSaturation -= 1;
         isDied();
     }
@@ -71,7 +73,9 @@ public class Deer extends Herbivore {
         int locationFoxPopulation = location.getPopulation().get("deerPopulation");
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxDeerPopulation")) {
-            location.animalArrive(new Deer(location, appProp), "deerPopulation");
+            Deer newDeer = new Deer(location, appProp);
+            newDeer.isMoved = true;
+            location.animalArrive(newDeer, "deerPopulation");
             System.out.println("A new deer was born.");
         } else {
             System.out.println("The deer could not breed.");

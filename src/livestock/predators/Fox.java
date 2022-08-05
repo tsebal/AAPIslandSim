@@ -21,7 +21,7 @@ public class Fox extends Predator {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    private boolean isMoved;
+    public boolean isMoved;
 
     public Fox(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -58,6 +58,7 @@ public class Fox extends Predator {
             System.out.println("Fox moves " + (i + 1) + " times");
             moveDirection();
         }
+        isMoved = true;
         foodSaturation -= 0.05f;
         isDied();
     }
@@ -79,7 +80,9 @@ public class Fox extends Predator {
         int locationFoxPopulation = location.getPopulation().get("foxPopulation");
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxFoxPopulation")) {
-            location.animalArrive(new Fox(location, appProp), "foxPopulation");
+            Fox newFox = new Fox(location, appProp);
+            newFox.isMoved = true;
+            location.animalArrive(newFox, "foxPopulation");
             System.out.println("A new fox was born.");
         } else {
             System.out.println("The fox could not breed.");

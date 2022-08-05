@@ -5,6 +5,7 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -101,26 +102,46 @@ public class Location {
 
     //events taking place in the location
     public void recalculate() {
+        ThreadLocalRandom animalCase = ThreadLocalRandom.current();
+        Field isMoved;
 
-        //predators eats herbivores
+        //predators randomly eats/moves/breeds
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
-            int predatorCase = ThreadLocalRandom.current().nextInt(3);
-            switch (predatorCase) {
-                case 0 -> predator.breed();
-                case 1 -> predator.eat(herbivores);
-                case 2 -> predator.move();
+
+            try {
+                isMoved = predator.getClass().getDeclaredField("isMoved");
+                if (!isMoved.getBoolean(predator)) {
+                    switch (animalCase.nextInt(3)) {
+                        case 0 -> predator.breed();
+                        case 1 -> predator.eat(herbivores);
+                        case 2 -> predator.move();
+                    }
+                } else {
+                    isMoved.setBoolean(predator, false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
         //herbivores eats plants, mouses, caterpillars
         for (int i = 0; i < herbivores.size(); i++) {
             Herbivore herbivore = herbivores.get(i);
-            int herbivoreCase = ThreadLocalRandom.current().nextInt(3);
-            switch (herbivoreCase) {
-                case 0 -> herbivore.breed();
-                case 1 -> herbivore.eat(plants);
-                case 2 -> herbivore.move();
+
+            try {
+                isMoved = herbivore.getClass().getDeclaredField("isMoved");
+                if (!isMoved.getBoolean(herbivore)) {
+                    switch (animalCase.nextInt(3)) {
+                        case 0 -> herbivore.breed();
+                        case 1 -> herbivore.eat(plants);
+                        case 2 -> herbivore.move();
+                    }
+                } else {
+                    isMoved.setBoolean(herbivore, false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

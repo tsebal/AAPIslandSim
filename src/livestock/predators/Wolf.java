@@ -22,7 +22,7 @@ public class Wolf extends Predator {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    private boolean isMoved;
+    public boolean isMoved;
 
     public Wolf(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -65,6 +65,7 @@ public class Wolf extends Predator {
             System.out.println("Wolf moves " + (i + 1) + " times");
             moveDirection();
         }
+        isMoved = true;
         foodSaturation -= 1;
         isDied();
     }
@@ -86,7 +87,9 @@ public class Wolf extends Predator {
         int locationWolfPopulation = location.getPopulation().get("wolfPopulation");
         if (locationWolfPopulation / BREED_FACTOR >= 2 &&
                 locationWolfPopulation < location.getMaxPopulation().get("maxWolfPopulation")) {
-            location.animalArrive(new Wolf(location, appProp), "wolfPopulation");
+            Wolf newWolf = new Wolf(location, appProp);
+            newWolf.isMoved = true;
+            location.animalArrive(newWolf, "wolfPopulation");
             System.out.println("A new wolf was born.");
         } else {
             System.out.println("The wolf could not breed.");
