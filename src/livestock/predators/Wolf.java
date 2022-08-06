@@ -53,7 +53,7 @@ public class Wolf extends Predator {
                 }
             }
             System.out.println("Wolf is hungry, no more herbivores there!");
-            foodSaturation -= 1;
+            foodSaturation -= 2;
             isDied();
         }
     }
@@ -66,7 +66,7 @@ public class Wolf extends Predator {
             moveDirection();
         }
         isMoved = true;
-        foodSaturation -= 1;
+        foodSaturation -= 2;
         isDied();
     }
 
@@ -94,7 +94,7 @@ public class Wolf extends Predator {
         } else {
             System.out.println("The wolf could not breed.");
         }
-        foodSaturation -= 1;
+        foodSaturation -= 2;
         isDied();
     }
 

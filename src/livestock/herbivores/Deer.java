@@ -38,7 +38,7 @@ public class Deer extends Herbivore {
                 foodSaturation += 1;
             } else {
                 System.out.println("Deer is hungry, no more plants there!");
-                foodSaturation -= 1;
+                foodSaturation -= 2;
                 isDied();
             }
         }
@@ -52,7 +52,7 @@ public class Deer extends Herbivore {
             moveDirection();
         }
         isMoved = true;
-        foodSaturation -= 1;
+        foodSaturation -= 2;
         isDied();
     }
 
@@ -80,7 +80,7 @@ public class Deer extends Herbivore {
         } else {
             System.out.println("The deer could not breed.");
         }
-        foodSaturation -= 1;
+        foodSaturation -= 2;
         isDied();
     }
 

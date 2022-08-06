@@ -46,7 +46,7 @@ public class Fox extends Predator {
                 }
             }
             System.out.println("Fox is hungry, no more herbivores there!");
-            foodSaturation -= 0.05f;
+            foodSaturation -= 0.5f;
             isDied();
         }
     }
@@ -59,7 +59,7 @@ public class Fox extends Predator {
             moveDirection();
         }
         isMoved = true;
-        foodSaturation -= 0.05f;
+        foodSaturation -= 0.5f;
         isDied();
     }
 
@@ -87,7 +87,7 @@ public class Fox extends Predator {
         } else {
             System.out.println("The fox could not breed.");
         }
-        foodSaturation -= 0.05f;
+        foodSaturation -= 0.5f;
         isDied();
     }
 

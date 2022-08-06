@@ -1,6 +1,11 @@
 package island;
 
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.function.BooleanSupplier;
+import java.util.stream.IntStream;
+
+import static java.util.stream.IntStream.range;
 
 /**
  * Island class initializes the entire island with the given parameters.
@@ -13,10 +18,10 @@ public class Island {
     public Island(Properties appProp) {
         this.appProp = appProp;
         this.islandMap = new Location[Integer.parseInt(appProp.getProperty("IslandSizeX"))]
-                                    [Integer.parseInt(appProp.getProperty("IslandSizeY"))];
+                [Integer.parseInt(appProp.getProperty("IslandSizeY"))];
     }
 
-    public void initialize(){
+    public void initialize() {
         int[] locationCoordinates;
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
@@ -24,6 +29,7 @@ public class Island {
                 islandMap[i][j] = new Location(appProp, islandMap, locationCoordinates);
             }
         }
+        System.out.printf("Island dimensions: %dX%d \n", islandMap.length, islandMap[0].length);
     }
 
     public void refresh() {
@@ -34,13 +40,24 @@ public class Island {
         }
     }
 
-    public void print(){
-        System.out.printf("Island dimensions: %dX%d \n", islandMap.length, islandMap[0].length);
+    public void print() {
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
                 System.out.print("[" + i + ":" + j + "]" + islandMap[i][j]);
             }
             System.out.println();
         }
+    }
+
+    public boolean isExtinct() {
+        int emptyLocationsCounter = 0;
+        for (int i = 0; i < islandMap.length; i++) {
+            for (int j = 0; j < islandMap[i].length; j++) {
+                if (islandMap[i][j].predators.isEmpty() && islandMap[i][j].herbivores.isEmpty()) {
+                    emptyLocationsCounter++;
+                }
+            }
+        }
+        return emptyLocationsCounter == (islandMap.length + islandMap[0].length - 1);
     }
 }
