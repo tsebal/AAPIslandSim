@@ -30,8 +30,6 @@ public enum MoveDirection {
         Location tempLocation = location;
         Location newLocation = location;
         for (int i = 0; i < moveSpeed; i++) {
-            System.out.println("Animal moves " + (i + 1) + " times");
-
             int[] oldCoordinates = tempLocation.getLocationCoordinates();
             if (moveDirection == MoveDirection.UP) {
                 if (oldCoordinates[1] > 0) {

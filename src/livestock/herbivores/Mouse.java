@@ -40,11 +40,9 @@ public class Mouse extends Herbivore {
     public void eat(List<Plant> plant) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             if (!plant.isEmpty()) {
-                System.out.println("Mouse eats Plant");
                 plant.remove(0);
                 foodSaturation = MAX_FOOD_SATURATION;
             } else {
-                System.out.println("Mouse is hungry, no more plants there!");
                 foodSaturation -= 0.005f;
                 isDied();
             }
@@ -80,9 +78,6 @@ public class Mouse extends Herbivore {
             Mouse newMouse = new Mouse(location, appProp);
             newMouse.isMoved = true;
             location.animalArrive(newMouse, "mousePopulation");
-            System.out.println("A new mouse was born.");
-        } else {
-            System.out.println("The mouse could not breed.");
         }
         foodSaturation -= 0.005f;
         isDied();
@@ -91,7 +86,6 @@ public class Mouse extends Herbivore {
     @Override
     public void isDied() {
         if (foodSaturation < 0) {
-            System.out.println("The mouse died hungry.");
             location.animalLeave(this, "mousePopulation");
         }
     }

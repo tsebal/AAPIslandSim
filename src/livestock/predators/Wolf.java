@@ -45,19 +45,16 @@ public class Wolf extends Predator {
             for (Herbivore herbivore : herbivores) {
                 if (herbivore instanceof Deer &&
                         EatingChance.isEated(this, herbivore)) {
-                    System.out.println("Wolf eats Deer");
                     location.animalLeave(herbivore, "deerPopulation");
                     foodSaturation = MAX_FOOD_SATURATION;
                     return;
                 } else if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
-                    System.out.println("Wolf eats Mouse");
                     location.animalLeave(herbivore, "mousePopulation");
                     foodSaturation += herbivore.getWeight();
                     return;
                 }
             }
-            System.out.println("Wolf is hungry, no more herbivores there!");
             foodSaturation -= 2;
             isDied();
         }
@@ -92,9 +89,6 @@ public class Wolf extends Predator {
             Wolf newWolf = new Wolf(location, appProp);
             newWolf.isMoved = true;
             location.animalArrive(newWolf, "wolfPopulation");
-            System.out.println("A new wolf was born.");
-        } else {
-            System.out.println("The wolf could not breed.");
         }
         foodSaturation -= 2;
         isDied();
@@ -103,7 +97,6 @@ public class Wolf extends Predator {
     @Override
     public void isDied() {
         if (foodSaturation < 0) {
-            System.out.println("The wolf died hungry.");
             location.animalLeave(this, "wolfPopulation");
         }
     }

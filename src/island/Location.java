@@ -13,11 +13,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Location (one cell of the island) where the main action takes place.
  * Contains lists of herbivores, predators, plants and events.
  */
-public class Location {
-    private Properties appProp;
-    private Location[][] islandMap;
-    private int[] locationCoordinates;
-    private Map<String, Integer> maxPopulation = new HashMap<>();
+public class Location implements Runnable {
+    private final Properties appProp;
+    private final Location[][] islandMap;
+    private final int[] locationCoordinates;
+    private final Map<String, Integer> maxPopulation = new HashMap<>();
     private volatile Map<String, Integer> population = new HashMap<>();
 
     public volatile List<Herbivore> herbivores = new ArrayList<>();
@@ -103,8 +103,8 @@ public class Location {
         return population;
     }
 
-    //events taking place in the location
-    public void recalculate() {
+    @Override
+    public void run() {
         ThreadLocalRandom animalCase = ThreadLocalRandom.current();
         Field isMoved;
 
@@ -150,7 +150,7 @@ public class Location {
 
     }
 
-    public void animalLeave(Animal animal, String populationType) {
+    public synchronized void animalLeave(Animal animal, String populationType) {
         if (animal instanceof Predator) {
             predators.remove(animal);
         } else if (animal instanceof Herbivore) {
@@ -159,7 +159,7 @@ public class Location {
         changePopulation(populationType, -1);
     }
 
-    public void animalArrive(Animal animal, String populationType) {
+    public synchronized void animalArrive(Animal animal, String populationType) {
         if (animal instanceof Predator) {
             predators.add((Predator) animal);
         } else if (animal instanceof Herbivore) {

@@ -44,13 +44,11 @@ public class Fox extends Predator {
             for (Herbivore herbivore : herbivores) {
                 if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
-                    System.out.println("Fox eats Mouse");
                     location.animalLeave(herbivore, "mousePopulation");
                     foodSaturation += herbivore.getWeight();
                     return;
                 }
             }
-            System.out.println("Fox is hungry, no more herbivores there!");
             foodSaturation -= 0.5f;
             isDied();
         }
@@ -85,9 +83,6 @@ public class Fox extends Predator {
             Fox newFox = new Fox(location, appProp);
             newFox.isMoved = true;
             location.animalArrive(newFox, "foxPopulation");
-            System.out.println("A new fox was born.");
-        } else {
-            System.out.println("The fox could not breed.");
         }
         foodSaturation -= 0.5f;
         isDied();
@@ -96,7 +91,6 @@ public class Fox extends Predator {
     @Override
     public void isDied() {
         if (foodSaturation < 0) {
-            System.out.println("The fox died hungry.");
             location.animalLeave(this, "foxPopulation");
         }
     }

@@ -42,7 +42,6 @@ public class Duck extends Herbivore implements EatsHerbivores {
             switch (duckChoosesFood) {
                 case 0 -> {
                     if (!plant.isEmpty()) {
-                        System.out.println("Duck eats Plant");
                         plant.remove(0);
                         foodSaturation = MAX_FOOD_SATURATION;
                     }
@@ -50,7 +49,6 @@ public class Duck extends Herbivore implements EatsHerbivores {
                 case 1 -> eatHerbivore(location.herbivores);
             }
         } else {
-            System.out.println("Duck is hungry, no more plants there!");
             foodSaturation -= 0.05f;
             isDied();
         }
@@ -90,9 +88,6 @@ public class Duck extends Herbivore implements EatsHerbivores {
             Duck newDuck = new Duck(location, appProp);
             newDuck.isMoved = true;
             location.animalArrive(newDuck, "duckPopulation");
-            System.out.println("A new duck was born.");
-        } else {
-            System.out.println("The duck could not breed.");
         }
         foodSaturation -= 0.05f;
         isDied();
@@ -101,7 +96,6 @@ public class Duck extends Herbivore implements EatsHerbivores {
     @Override
     public void isDied() {
         if (foodSaturation < 0) {
-            System.out.println("The duck died hungry.");
             location.animalLeave(this, "duckPopulation");
         }
     }

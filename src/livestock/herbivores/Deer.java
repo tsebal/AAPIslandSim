@@ -37,11 +37,9 @@ public class Deer extends Herbivore {
     public void eat(List<Plant> plant) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             if (!plant.isEmpty()) {
-                System.out.println("Deer eats Plant");
                 plant.remove(0);
                 foodSaturation += 1;
             } else {
-                System.out.println("Deer is hungry, no more plants there!");
                 foodSaturation -= 1;
                 isDied();
             }
@@ -77,9 +75,6 @@ public class Deer extends Herbivore {
             Deer newDeer = new Deer(location, appProp);
             newDeer.isMoved = true;
             location.animalArrive(newDeer, "deerPopulation");
-            System.out.println("A new deer was born.");
-        } else {
-            System.out.println("The deer could not breed.");
         }
         foodSaturation -= 2;
         isDied();
@@ -88,7 +83,6 @@ public class Deer extends Herbivore {
     @Override
     public void isDied() {
         if (foodSaturation < 0) {
-            System.out.println("The deer died hungry.");
             location.animalLeave(this, "deerPopulation");
         }
     }
