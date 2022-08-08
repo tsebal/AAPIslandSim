@@ -1,5 +1,7 @@
 package livestock.herbivores;
 
+import java.util.List;
+
 public interface EatsHerbivores {
-    void eatHerbivore();
+    void eatHerbivore(List<Herbivore> herbivores);
 }

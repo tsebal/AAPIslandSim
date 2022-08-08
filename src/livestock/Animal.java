@@ -11,5 +11,7 @@ public abstract class Animal {
 
     public abstract void breed();
 
+    public abstract float getWeight();
+
     public abstract void isDied();
 }

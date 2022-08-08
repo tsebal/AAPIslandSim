@@ -35,6 +35,11 @@ public class Wolf extends Predator {
     }
 
     @Override
+    public float getWeight() {
+        return WEIGHT;
+    }
+
+    @Override
     public void eat(List<Herbivore> herbivores) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             for (Herbivore herbivore : herbivores) {
@@ -48,7 +53,7 @@ public class Wolf extends Predator {
                         EatingChance.isEated(this, herbivore)) {
                     System.out.println("Wolf eats Mouse");
                     location.animalLeave(herbivore, "mousePopulation");
-                    foodSaturation += 0.05f;
+                    foodSaturation += herbivore.getWeight();
                     return;
                 }
             }
@@ -60,11 +65,7 @@ public class Wolf extends Predator {
 
     @Override
     public void move() {
-        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
-        for (int i = 0; i < moveSpeed; i++) {
-            System.out.println("Wolf moves " + (i + 1) + " times");
-            moveDirection();
-        }
+        moveDirection();
         isMoved = true;
         foodSaturation -= 2;
         isDied();
@@ -72,7 +73,8 @@ public class Wolf extends Predator {
 
     @Override
     public void moveDirection() {
-        Location newLocation = MoveDirection.getNewLocation(location);
+        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
+        Location newLocation = MoveDirection.getNewLocation(location, moveSpeed);
 
         if (newLocation != location &&
                 newLocation.getPopulation().get("wolfPopulation") < newLocation.getMaxPopulation().get("maxWolfPopulation")) {

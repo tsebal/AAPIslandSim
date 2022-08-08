@@ -1,18 +1,13 @@
 package island;
 
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.function.BooleanSupplier;
-import java.util.stream.IntStream;
-
-import static java.util.stream.IntStream.range;
 
 /**
  * Island class initializes the entire island with the given parameters.
  * Retrieves the Island dimensions into the constructor
  */
 public class Island {
-    Properties appProp;
+    private Properties appProp;
     private Location[][] islandMap;
 
     public Island(Properties appProp) {
@@ -49,15 +44,22 @@ public class Island {
         }
     }
 
+    /**
+     * Checks to see if all the animals are extinct on the island.
+     * @return true if all the animals are extinct
+     */
     public boolean isExtinct() {
         int emptyLocationsCounter = 0;
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
-                if (islandMap[i][j].predators.isEmpty() && islandMap[i][j].herbivores.isEmpty()) {
+                if (islandMap[i][j].getPopulation()
+                        .entrySet()
+                        .stream()
+                        .allMatch(entry -> entry.getValue() <= 0)) {
                     emptyLocationsCounter++;
                 }
             }
         }
-        return emptyLocationsCounter == (islandMap.length + islandMap[0].length - 1);
+        return emptyLocationsCounter == (islandMap.length * islandMap[0].length);
     }
 }

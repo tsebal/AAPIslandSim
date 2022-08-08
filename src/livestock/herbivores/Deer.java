@@ -3,7 +3,6 @@ package livestock.herbivores;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
-import livestock.predators.Wolf;
 
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +29,11 @@ public class Deer extends Herbivore {
     }
 
     @Override
+    public float getWeight() {
+        return WEIGHT;
+    }
+
+    @Override
     public void eat(List<Plant> plant) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             if (!plant.isEmpty()) {
@@ -38,7 +42,7 @@ public class Deer extends Herbivore {
                 foodSaturation += 1;
             } else {
                 System.out.println("Deer is hungry, no more plants there!");
-                foodSaturation -= 2;
+                foodSaturation -= 1;
                 isDied();
             }
         }
@@ -46,11 +50,7 @@ public class Deer extends Herbivore {
 
     @Override
     public void move() {
-        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
-        for (int i = 0; i < moveSpeed; i++) {
-            System.out.println("Deer moves " + (i + 1) + " times");
-            moveDirection();
-        }
+        moveDirection();
         isMoved = true;
         foodSaturation -= 2;
         isDied();
@@ -58,7 +58,8 @@ public class Deer extends Herbivore {
 
     @Override
     public void moveDirection() {
-        Location newLocation = MoveDirection.getNewLocation(location);
+        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
+        Location newLocation = MoveDirection.getNewLocation(location, moveSpeed);
 
         if (newLocation != location &&
                 newLocation.getPopulation().get("deerPopulation") < newLocation.getMaxPopulation().get("maxDeerPopulation")) {

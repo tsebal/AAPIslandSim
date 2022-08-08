@@ -14,15 +14,15 @@ import java.util.concurrent.ThreadLocalRandom;
  * Contains lists of herbivores, predators, plants and events.
  */
 public class Location {
-    Properties appProp;
+    private Properties appProp;
     private Location[][] islandMap;
     private int[] locationCoordinates;
     private Map<String, Integer> maxPopulation = new HashMap<>();
-    private Map<String, Integer> population = new HashMap<>();
+    private volatile Map<String, Integer> population = new HashMap<>();
 
-    public List<Herbivore> herbivores = new ArrayList<>();
-    public List<Predator> predators = new ArrayList<>();
-    public List<Plant> plants = new ArrayList<>();
+    public volatile List<Herbivore> herbivores = new ArrayList<>();
+    public volatile List<Predator> predators = new ArrayList<>();
+    public volatile List<Plant> plants = new ArrayList<>();
 
     public Location(Properties appProp, Location[][] islandMap, int[] locationCoordinates) {
         this.appProp = appProp;
@@ -30,8 +30,9 @@ public class Location {
         this.locationCoordinates = locationCoordinates;
         this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
         this.maxPopulation.put("maxDeerPopulation", Integer.parseInt(appProp.getProperty("DeerPopulationMax")));
-        this.maxPopulation.put("maxMousePopulation", Integer.parseInt(appProp.getProperty("MousePopulationMax")));
+        this.maxPopulation.put("maxDuckPopulation", Integer.parseInt(appProp.getProperty("DuckPopulationMax")));
         this.maxPopulation.put("maxFoxPopulation", Integer.parseInt(appProp.getProperty("FoxPopulationMax")));
+        this.maxPopulation.put("maxMousePopulation", Integer.parseInt(appProp.getProperty("MousePopulationMax")));
         this.maxPopulation.put("maxWolfPopulation", Integer.parseInt(appProp.getProperty("WolfPopulationMax")));
         initialize();
     }
@@ -64,10 +65,12 @@ public class Location {
         }
         population.put("deerPopulation",
                 initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation")));
-        population.put("mousePopulation",
-                initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation")));
+        population.put("duckPopulation",
+                initializeHerbivores(Duck.class, maxPopulation.get("maxDuckPopulation")));
         population.put("foxPopulation",
                 initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation")));
+        population.put("mousePopulation",
+                initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation")));
         population.put("wolfPopulation",
                 initializePredators(Wolf.class, maxPopulation.get("maxWolfPopulation")));
     }
@@ -171,6 +174,7 @@ public class Location {
                 "herbivores=" + herbivores.size() +
                 ": \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
                 " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
+                " | \uD83E\uDD86Ducks=" + population.get("duckPopulation") +
                 "\n\t\t\t  predators=" + predators.size() +
                 ": \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
                 " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +

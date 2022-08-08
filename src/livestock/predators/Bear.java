@@ -12,6 +12,11 @@ public class Bear extends Predator {
     private int foodSaturation = 0;
 
     @Override
+    public float getWeight() {
+        return 0;
+    }
+
+    @Override
     public void eat(List<Herbivore> herbivores) {
 
     }

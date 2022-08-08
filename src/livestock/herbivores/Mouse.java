@@ -3,7 +3,6 @@ package livestock.herbivores;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
-import livestock.predators.Wolf;
 
 import java.util.List;
 import java.util.Properties;
@@ -33,6 +32,11 @@ public class Mouse extends Herbivore {
     }
 
     @Override
+    public float getWeight() {
+        return WEIGHT;
+    }
+
+    @Override
     public void eat(List<Plant> plant) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             if (!plant.isEmpty()) {
@@ -49,11 +53,7 @@ public class Mouse extends Herbivore {
 
     @Override
     public void move() {
-        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
-        for (int i = 0; i < moveSpeed; i++) {
-            System.out.println("Mouse moves " + (i + 1) + " times");
-            moveDirection();
-        }
+        moveDirection();
         isMoved = true;
         foodSaturation -= 0.005f;
         isDied();
@@ -61,7 +61,8 @@ public class Mouse extends Herbivore {
 
     @Override
     public void moveDirection() {
-        Location newLocation = MoveDirection.getNewLocation(location);
+        int moveSpeed = ThreadLocalRandom.current().nextInt(MAX_AREA_MOVE_SPEED + 1);
+        Location newLocation = MoveDirection.getNewLocation(location, moveSpeed);
 
         if (newLocation != location &&
                 newLocation.getPopulation().get("mousePopulation") < newLocation.getMaxPopulation().get("maxMousePopulation")) {
