@@ -16,7 +16,7 @@ public class Deer extends Herbivore {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private int foodSaturation;
-    public boolean isMoved;
+    private boolean isMoved;
 
     public Deer(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -26,6 +26,17 @@ public class Deer extends Herbivore {
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("DeerFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("DeerBreedFactor"));
         this.foodSaturation = Integer.parseInt(appProp.getProperty("DeerFoodSaturation"));
+        this.isMoved = false;
+    }
+
+    @Override
+    public boolean isMoved() {
+        return isMoved;
+    }
+
+    @Override
+    public void setIsMoved(boolean isMoved) {
+        this.isMoved = isMoved;
     }
 
     @Override
@@ -49,7 +60,7 @@ public class Deer extends Herbivore {
     @Override
     public void move() {
         moveDirection();
-        isMoved = true;
+        setIsMoved(true);
         foodSaturation -= 2;
         isDied();
     }
@@ -73,7 +84,7 @@ public class Deer extends Herbivore {
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxDeerPopulation")) {
             Deer newDeer = new Deer(location, appProp);
-            newDeer.isMoved = true;
+            newDeer.setIsMoved(true);
             location.animalArrive(newDeer, "deerPopulation");
         }
         foodSaturation -= 2;

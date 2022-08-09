@@ -17,7 +17,7 @@ public class Duck extends Herbivore implements EatsHerbivores {
     private static float MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    public boolean isMoved;
+    private boolean isMoved;
 
     public Duck(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -27,6 +27,17 @@ public class Duck extends Herbivore implements EatsHerbivores {
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("DuckFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("DuckBreedFactor"));
         this.foodSaturation = Float.parseFloat(appProp.getProperty("DuckFoodSaturation"));
+        this.isMoved = false;
+    }
+
+    @Override
+    public boolean isMoved() {
+        return isMoved;
+    }
+
+    @Override
+    public void setIsMoved(boolean isMoved) {
+        this.isMoved = isMoved;
     }
 
     @Override
@@ -46,7 +57,7 @@ public class Duck extends Herbivore implements EatsHerbivores {
                         foodSaturation = MAX_FOOD_SATURATION;
                     }
                 }
-                case 1 -> eatHerbivore(location.herbivores);
+                case 1 -> eatHerbivore(location.getHerbivores());
             }
         } else {
             foodSaturation -= 0.05f;
@@ -56,13 +67,13 @@ public class Duck extends Herbivore implements EatsHerbivores {
 
     @Override
     public void eatHerbivore(List<Herbivore> herbivores) {
-        System.out.println("Duck fake eats herbivore");
+        //System.out.println("Duck fake eats herbivore");
     }
 
     @Override
     public void move() {
         moveDirection();
-        isMoved = true;
+        setIsMoved(true);
         foodSaturation -= 0.05f;
         isDied();
     }
@@ -86,7 +97,7 @@ public class Duck extends Herbivore implements EatsHerbivores {
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxDuckPopulation")) {
             Duck newDuck = new Duck(location, appProp);
-            newDuck.isMoved = true;
+            newDuck.setIsMoved(true);
             location.animalArrive(newDuck, "duckPopulation");
         }
         foodSaturation -= 0.05f;

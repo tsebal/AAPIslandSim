@@ -12,6 +12,16 @@ public class Eagle extends Predator {
     private int foodSaturation = 0;
 
     @Override
+    public boolean isMoved() {
+        return false;
+    }
+
+    @Override
+    public void setIsMoved(boolean isMoved) {
+
+    }
+
+    @Override
     public float getWeight() {
         return 0;
     }

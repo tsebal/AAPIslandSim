@@ -13,5 +13,9 @@ public abstract class Animal {
 
     public abstract float getWeight();
 
+    public abstract boolean isMoved();
+
+    public abstract void setIsMoved(boolean isMoved);
+
     public abstract void isDied();
 }

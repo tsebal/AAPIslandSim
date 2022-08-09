@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Wolf chance eats: Horse 10%, Deer 15%, Rabbit 60%, Mouse 80%, Goat 60%, Sheep 70%, Boar 15%, Buffalo 10%, Duck 40%
- */
+// Wolf chance eats: Horse 10%, Deer 15%, Rabbit 60%, Mouse 80%, Goat 60%, Sheep 70%, Boar 15%, Buffalo 10%, Duck 40%
 public class Wolf extends Predator {
     private final Properties appProp;
     private Location location;
@@ -22,7 +20,7 @@ public class Wolf extends Predator {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    public boolean isMoved;
+    private boolean isMoved;
 
     public Wolf(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -32,6 +30,17 @@ public class Wolf extends Predator {
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("WolfFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("WolfBreedFactor"));
         this.foodSaturation = Float.parseFloat(appProp.getProperty("WolfFoodSaturation"));
+        this.isMoved = false;
+    }
+
+    @Override
+    public boolean isMoved() {
+        return isMoved;
+    }
+
+    @Override
+    public void setIsMoved(boolean isMoved) {
+        this.isMoved = isMoved;
     }
 
     @Override
@@ -63,7 +72,7 @@ public class Wolf extends Predator {
     @Override
     public void move() {
         moveDirection();
-        isMoved = true;
+        setIsMoved(true);
         foodSaturation -= 2;
         isDied();
     }
@@ -87,7 +96,7 @@ public class Wolf extends Predator {
         if (locationWolfPopulation / BREED_FACTOR >= 2 &&
                 locationWolfPopulation < location.getMaxPopulation().get("maxWolfPopulation")) {
             Wolf newWolf = new Wolf(location, appProp);
-            newWolf.isMoved = true;
+            newWolf.setIsMoved(true);
             location.animalArrive(newWolf, "wolfPopulation");
         }
         foodSaturation -= 2;

@@ -9,6 +9,9 @@ import java.util.concurrent.Executors;
  * Retrieves the Island dimensions into the constructor
  */
 public class Island implements Runnable {
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
     private final Properties appProp;
     private final Location[][] islandMap;
     private final ExecutorService executor;
@@ -29,7 +32,8 @@ public class Island implements Runnable {
                 islandMap[i][j] = new Location(appProp, islandMap, locationCoordinates);
             }
         }
-        System.out.printf("Island dimensions: %dX%d \n", islandMap.length, islandMap[0].length);
+        System.out.println(ANSI_GREEN + "Day 1: " + ANSI_RESET +
+                "The plants have grown, let all the animals out on the island!");
     }
 
     @Override
@@ -40,10 +44,12 @@ public class Island implements Runnable {
                 executor.execute(islandMap[i][j]);
             }
         }
+        System.out.println(ANSI_GREEN + "Day: " + daysCounter + ANSI_RESET);
         print();
         if (isExtinct()) {
             System.out.println("Unfortunately, all the animals on the island are extinct. " +
                     "Life on the island lasted " + daysCounter + " days.");
+            executor.shutdown();
             System.exit(0);
         }
     }

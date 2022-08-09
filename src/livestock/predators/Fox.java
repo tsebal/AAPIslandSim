@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Fox chance eats: Rabbit 70%, Mouse 90%, Duck 60%, Caterpillar 40%
- */
+//Fox chance eats: Rabbit 70%, Mouse 90%, Duck 60%, Caterpillar 40%
 public class Fox extends Predator {
     private final Properties appProp;
     private Location location;
@@ -21,7 +19,7 @@ public class Fox extends Predator {
     private static int MAX_FOOD_SATURATION;
     private static int BREED_FACTOR;
     private float foodSaturation;
-    public boolean isMoved;
+    private boolean isMoved;
 
     public Fox(Location location, Properties appProp) {
         this.appProp = appProp;
@@ -31,6 +29,17 @@ public class Fox extends Predator {
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("FoxFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("FoxBreedFactor"));
         this.foodSaturation = Float.parseFloat(appProp.getProperty("FoxFoodSaturation"));
+        this.isMoved = false;
+    }
+
+    @Override
+    public boolean isMoved() {
+        return isMoved;
+    }
+
+    @Override
+    public void setIsMoved(boolean isMoved) {
+        this.isMoved = isMoved;
     }
 
     @Override
@@ -57,7 +66,7 @@ public class Fox extends Predator {
     @Override
     public void move() {
         moveDirection();
-        isMoved = true;
+        setIsMoved(true);
         foodSaturation -= 0.5f;
         isDied();
     }
@@ -81,7 +90,7 @@ public class Fox extends Predator {
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxFoxPopulation")) {
             Fox newFox = new Fox(location, appProp);
-            newFox.isMoved = true;
+            newFox.setIsMoved(true);
             location.animalArrive(newFox, "foxPopulation");
         }
         foodSaturation -= 0.5f;

@@ -5,8 +5,8 @@ import livestock.Plant;
 import livestock.herbivores.*;
 import livestock.predators.*;
 
-import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -18,11 +18,11 @@ public class Location implements Runnable {
     private final Location[][] islandMap;
     private final int[] locationCoordinates;
     private final Map<String, Integer> maxPopulation = new HashMap<>();
-    private volatile Map<String, Integer> population = new HashMap<>();
+    private final Map<String, Integer> population = new HashMap<>();
 
-    public volatile List<Herbivore> herbivores = new ArrayList<>();
-    public volatile List<Predator> predators = new ArrayList<>();
-    public volatile List<Plant> plants = new ArrayList<>();
+    private final CopyOnWriteArrayList<Herbivore> herbivores = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Predator> predators = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Plant> plants = new CopyOnWriteArrayList<>();
 
     public Location(Properties appProp, Location[][] islandMap, int[] locationCoordinates) {
         this.appProp = appProp;
@@ -37,12 +37,12 @@ public class Location implements Runnable {
         initialize();
     }
 
-    public int[] getLocationCoordinates() {
-        return locationCoordinates;
-    }
-
     public Location[][] getIslandMap() {
         return islandMap;
+    }
+
+    public int[] getLocationCoordinates() {
+        return locationCoordinates;
     }
 
     public Map<String, Integer> getMaxPopulation() {
@@ -53,7 +53,19 @@ public class Location implements Runnable {
         return population;
     }
 
-    public void changePopulation(String populationType, int quantity) {
+    public CopyOnWriteArrayList<Herbivore> getHerbivores() {
+        return herbivores;
+    }
+
+    public CopyOnWriteArrayList<Predator> getPredators() {
+        return predators;
+    }
+
+    public CopyOnWriteArrayList<Plant> getPlants() {
+        return plants;
+    }
+
+    private synchronized void changePopulation(String populationType, int quantity) {
         population.computeIfPresent(populationType, (key, value) -> (value + quantity));
     }
 
@@ -106,48 +118,35 @@ public class Location implements Runnable {
     @Override
     public void run() {
         ThreadLocalRandom animalCase = ThreadLocalRandom.current();
-        Field isMoved;
-
         //predators randomly eats/moves/breeds
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
 
-            try {
-                isMoved = predator.getClass().getDeclaredField("isMoved");
-                if (!isMoved.getBoolean(predator)) {
-                    switch (animalCase.nextInt(3)) {
-                        case 0 -> predator.breed();
-                        case 1 -> predator.eat(herbivores);
-                        case 2 -> predator.move();
-                    }
-                } else {
-                    isMoved.setBoolean(predator, false);
+            if (!predator.isMoved()) {
+                switch (animalCase.nextInt(3)) {
+                    case 0 -> predator.breed();
+                    case 1 -> predator.eat(herbivores);
+                    case 2 -> predator.move();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                predator.setIsMoved(false);
             }
         }
 
-        //herbivores eats plants, mouses, caterpillars
+        //herbivores randomly eats/moves/breeds
         for (int i = 0; i < herbivores.size(); i++) {
             Herbivore herbivore = herbivores.get(i);
 
-            try {
-                isMoved = herbivore.getClass().getDeclaredField("isMoved");
-                if (!isMoved.getBoolean(herbivore)) {
-                    switch (animalCase.nextInt(3)) {
-                        case 0 -> herbivore.breed();
-                        case 1 -> herbivore.eat(plants);
-                        case 2 -> herbivore.move();
-                    }
-                } else {
-                    isMoved.setBoolean(herbivore, false);
+            if (!herbivore.isMoved()) {
+                switch (animalCase.nextInt(3)) {
+                    case 0 -> herbivore.breed();
+                    case 1 -> herbivore.eat(plants);
+                    case 2 -> herbivore.move();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                herbivore.setIsMoved(false);
             }
         }
-
     }
 
     public synchronized void animalLeave(Animal animal, String populationType) {
@@ -170,15 +169,15 @@ public class Location implements Runnable {
 
     @Override
     public String toString() {
-        return "Location{" +
+        return " location: " +
                 "herbivores=" + herbivores.size() +
                 ": \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
                 " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
                 " | \uD83E\uDD86Ducks=" + population.get("duckPopulation") +
-                "\n\t\t\t  predators=" + predators.size() +
+                "\n\t\t\t    predators=" + predators.size() +
                 ": \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
                 " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +
-                "\n\t\t\t \uD83C\uDF3Fplants=" + plants.size() +
+                "\n\t\t\t   \uD83C\uDF3Fplants=" + plants.size() +
                 "}\n";
     }
 }
