@@ -3,6 +3,8 @@ package livestock.predators;
 import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
+import livestock.herbivores.Caterpillar;
+import livestock.herbivores.Duck;
 import livestock.herbivores.Herbivore;
 import livestock.herbivores.Mouse;
 
@@ -12,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 //Fox chance eats: Rabbit 70%, Mouse 90%, Duck 60%, Caterpillar 40%
 public class Fox extends Predator {
-    private final Properties appProp;
     private Location location;
     private static int WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -21,9 +22,9 @@ public class Fox extends Predator {
     private float foodSaturation;
     private boolean isMoved;
 
-    public Fox(Location location, Properties appProp) {
-        this.appProp = appProp;
+    public Fox(Location location) {
         this.location = location;
+        Properties appProp = location.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("FoxWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("FoxAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("FoxFoodSaturationMax"));
@@ -54,6 +55,11 @@ public class Fox extends Predator {
                 if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "mousePopulation");
+                    foodSaturation += herbivore.getWeight();
+                    return;
+                } else if (herbivore instanceof Caterpillar &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "caterpillarPopulation");
                     foodSaturation += herbivore.getWeight();
                     return;
                 }
@@ -89,7 +95,7 @@ public class Fox extends Predator {
         int locationFoxPopulation = location.getPopulation().get("foxPopulation");
         if (locationFoxPopulation / BREED_FACTOR >= 2 &&
                 locationFoxPopulation < location.getMaxPopulation().get("maxFoxPopulation")) {
-            Fox newFox = new Fox(location, appProp);
+            Fox newFox = new Fox(location);
             newFox.setIsMoved(true);
             location.animalArrive(newFox, "foxPopulation");
         }

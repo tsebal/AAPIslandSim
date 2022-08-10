@@ -1,6 +1,7 @@
 package livestock.herbivores;
 
 import island.Location;
+import livestock.EatingChance;
 import livestock.MoveDirection;
 import livestock.Plant;
 
@@ -10,7 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 // Duck chance eats: Caterpillar 90%
 public class Duck extends Herbivore implements EatsHerbivores {
-    private final Properties appProp;
     private Location location;
     private static int WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -19,9 +19,9 @@ public class Duck extends Herbivore implements EatsHerbivores {
     private float foodSaturation;
     private boolean isMoved;
 
-    public Duck(Location location, Properties appProp) {
-        this.appProp = appProp;
+    public Duck(Location location) {
         this.location = location;
+        Properties appProp = location.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("DuckWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("DuckAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("DuckFoodSaturationMax"));
@@ -67,7 +67,18 @@ public class Duck extends Herbivore implements EatsHerbivores {
 
     @Override
     public void eatHerbivore(List<Herbivore> herbivores) {
-        //System.out.println("Duck fake eats herbivore");
+        if (foodSaturation < MAX_FOOD_SATURATION) {
+            for (Herbivore herbivore : herbivores) {
+                if (herbivore instanceof Caterpillar &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "caterpillarPopulation");
+                    foodSaturation += herbivore.getWeight();
+                    return;
+                }
+            }
+            foodSaturation -= 0.05f;
+            isDied();
+        }
     }
 
     @Override
@@ -93,10 +104,10 @@ public class Duck extends Herbivore implements EatsHerbivores {
 
     @Override
     public void breed() {
-        int locationFoxPopulation = location.getPopulation().get("duckPopulation");
-        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
-                locationFoxPopulation < location.getMaxPopulation().get("maxDuckPopulation")) {
-            Duck newDuck = new Duck(location, appProp);
+        int locationDuckPopulation = location.getPopulation().get("duckPopulation");
+        if (locationDuckPopulation / BREED_FACTOR >= 2 &&
+                locationDuckPopulation < location.getMaxPopulation().get("maxDuckPopulation")) {
+            Duck newDuck = new Duck(location);
             newDuck.setIsMoved(true);
             location.animalArrive(newDuck, "duckPopulation");
         }

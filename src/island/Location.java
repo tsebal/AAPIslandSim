@@ -29,12 +29,17 @@ public class Location implements Runnable {
         this.islandMap = islandMap;
         this.locationCoordinates = locationCoordinates;
         this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
+        this.maxPopulation.put("maxCaterpillarPopulation", Integer.parseInt(appProp.getProperty("CaterpillarPopulationMax")));
         this.maxPopulation.put("maxDeerPopulation", Integer.parseInt(appProp.getProperty("DeerPopulationMax")));
         this.maxPopulation.put("maxDuckPopulation", Integer.parseInt(appProp.getProperty("DuckPopulationMax")));
         this.maxPopulation.put("maxFoxPopulation", Integer.parseInt(appProp.getProperty("FoxPopulationMax")));
         this.maxPopulation.put("maxMousePopulation", Integer.parseInt(appProp.getProperty("MousePopulationMax")));
         this.maxPopulation.put("maxWolfPopulation", Integer.parseInt(appProp.getProperty("WolfPopulationMax")));
         initialize();
+    }
+
+    public Properties getAppProp() {
+        return appProp;
     }
 
     public Location[][] getIslandMap() {
@@ -71,10 +76,9 @@ public class Location implements Runnable {
 
     //location livestock initialization
     private void initialize() {
-        int random = ThreadLocalRandom.current().nextInt(maxPopulation.get("maxPlantPopulation") + 1);
-        for (int i = 0; i < random; i++) {
-            plants.add(new Plant());
-        }
+        growPlants();
+        population.put("caterpillarPopulation",
+                initializeHerbivores(Caterpillar.class, maxPopulation.get("maxCaterpillarPopulation")));
         population.put("deerPopulation",
                 initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation")));
         population.put("duckPopulation",
@@ -92,8 +96,8 @@ public class Location implements Runnable {
         for (int i = 0; i < population; i++) {
             try {
                 herbivores.add((Herbivore) herbivoreClass
-                        .getConstructor(Location.class, Properties.class)
-                        .newInstance(this, this.appProp));
+                        .getConstructor(Location.class)
+                        .newInstance(this));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,8 +110,8 @@ public class Location implements Runnable {
         for (int i = 0; i < population; i++) {
             try {
                 predators.add((Predator) predatorClass
-                        .getConstructor(Location.class, Properties.class)
-                        .newInstance(this, this.appProp));
+                        .getConstructor(Location.class)
+                        .newInstance(this));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -147,6 +151,7 @@ public class Location implements Runnable {
                 herbivore.setIsMoved(false);
             }
         }
+        growPlants();
     }
 
     public synchronized void animalLeave(Animal animal, String populationType) {
@@ -167,11 +172,20 @@ public class Location implements Runnable {
         changePopulation(populationType, +1);
     }
 
+    private void growPlants() {
+        int random = ThreadLocalRandom.current().nextInt(maxPopulation.get("maxPlantPopulation") + 1);
+        plants.clear();
+        for (int i = 0; i < random; i++) {
+            plants.add(new Plant());
+        }
+    }
+
     @Override
     public String toString() {
         return " location: " +
                 "herbivores=" + herbivores.size() +
-                ": \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
+                ":  \uD83D\uDC1BCaterplr=" + population.get("caterpillarPopulation") +
+                " | \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
                 " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
                 " | \uD83E\uDD86Ducks=" + population.get("duckPopulation") +
                 "\n\t\t\t    predators=" + predators.size() +

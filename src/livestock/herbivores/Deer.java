@@ -9,7 +9,6 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Deer extends Herbivore {
-    private final Properties appProp;
     private Location location;
     private static int WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -18,9 +17,9 @@ public class Deer extends Herbivore {
     private int foodSaturation;
     private boolean isMoved;
 
-    public Deer(Location location, Properties appProp) {
-        this.appProp = appProp;
+    public Deer(Location location) {
         this.location = location;
+        Properties appProp = location.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("DeerWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("DeerAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("DeerFoodSaturationMax"));
@@ -80,10 +79,10 @@ public class Deer extends Herbivore {
 
     @Override
     public void breed() {
-        int locationFoxPopulation = location.getPopulation().get("deerPopulation");
-        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
-                locationFoxPopulation < location.getMaxPopulation().get("maxDeerPopulation")) {
-            Deer newDeer = new Deer(location, appProp);
+        int locationDeerPopulation = location.getPopulation().get("deerPopulation");
+        if (locationDeerPopulation / BREED_FACTOR >= 2 &&
+                locationDeerPopulation < location.getMaxPopulation().get("maxDeerPopulation")) {
+            Deer newDeer = new Deer(location);
             newDeer.setIsMoved(true);
             location.animalArrive(newDeer, "deerPopulation");
         }

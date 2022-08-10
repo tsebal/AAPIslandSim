@@ -4,6 +4,7 @@ import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
 import livestock.herbivores.Deer;
+import livestock.herbivores.Duck;
 import livestock.herbivores.Herbivore;
 import livestock.herbivores.Mouse;
 
@@ -13,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 // Wolf chance eats: Horse 10%, Deer 15%, Rabbit 60%, Mouse 80%, Goat 60%, Sheep 70%, Boar 15%, Buffalo 10%, Duck 40%
 public class Wolf extends Predator {
-    private final Properties appProp;
     private Location location;
     private static int WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -22,9 +22,9 @@ public class Wolf extends Predator {
     private float foodSaturation;
     private boolean isMoved;
 
-    public Wolf(Location location, Properties appProp) {
-        this.appProp = appProp;
+    public Wolf(Location location) {
         this.location = location;
+        Properties appProp = location.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("WolfWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("WolfAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("WolfFoodSaturationMax"));
@@ -56,6 +56,11 @@ public class Wolf extends Predator {
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "deerPopulation");
                     foodSaturation = MAX_FOOD_SATURATION;
+                    return;
+                } else if (herbivore instanceof Duck &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "duckPopulation");
+                    foodSaturation += herbivore.getWeight();
                     return;
                 } else if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
@@ -95,7 +100,7 @@ public class Wolf extends Predator {
         int locationWolfPopulation = location.getPopulation().get("wolfPopulation");
         if (locationWolfPopulation / BREED_FACTOR >= 2 &&
                 locationWolfPopulation < location.getMaxPopulation().get("maxWolfPopulation")) {
-            Wolf newWolf = new Wolf(location, appProp);
+            Wolf newWolf = new Wolf(location);
             newWolf.setIsMoved(true);
             location.animalArrive(newWolf, "wolfPopulation");
         }

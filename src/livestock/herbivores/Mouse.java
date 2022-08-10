@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 //Mouse chance eats: Caterpillar 90%, Plant 100%
 public class Mouse extends Herbivore {
-    private final Properties appProp;
     private Location location;
     private static float WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -19,9 +18,9 @@ public class Mouse extends Herbivore {
     private float foodSaturation;
     private boolean isMoved;
 
-    public Mouse(Location location, Properties appProp) {
-        this.appProp = appProp;
+    public Mouse(Location location) {
         this.location = location;
+        Properties appProp = location.getAppProp();
         WEIGHT = Float.parseFloat(appProp.getProperty("MouseWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("MouseAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("MouseFoodSaturationMax"));
@@ -81,10 +80,10 @@ public class Mouse extends Herbivore {
 
     @Override
     public void breed() {
-        int locationFoxPopulation = location.getPopulation().get("mousePopulation");
-        if (locationFoxPopulation / BREED_FACTOR >= 2 &&
-                locationFoxPopulation < location.getMaxPopulation().get("maxMousePopulation")) {
-            Mouse newMouse = new Mouse(location, appProp);
+        int locationMousePopulation = location.getPopulation().get("mousePopulation");
+        if (locationMousePopulation / BREED_FACTOR >= 2 &&
+                locationMousePopulation < location.getMaxPopulation().get("maxMousePopulation")) {
+            Mouse newMouse = new Mouse(location);
             newMouse.setIsMoved(true);
             location.animalArrive(newMouse, "mousePopulation");
         }
