@@ -3,16 +3,12 @@ package livestock.predators;
 import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
-import livestock.herbivores.Caterpillar;
-import livestock.herbivores.Duck;
-import livestock.herbivores.Herbivore;
-import livestock.herbivores.Mouse;
+import livestock.herbivores.*;
 
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-//Fox chance eats: Rabbit 70%, Mouse 90%, Duck 60%, Caterpillar 40%
 public class Fox extends Predator {
     private Location location;
     private static int WEIGHT;
@@ -52,15 +48,29 @@ public class Fox extends Predator {
     public void eat(List<Herbivore> herbivores) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             for (Herbivore herbivore : herbivores) {
-                if (herbivore instanceof Mouse &&
+                if (herbivore instanceof Caterpillar &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "caterpillarPopulation");
+                    foodSaturation += herbivore.getWeight();
+                    return;
+                } else if (herbivore instanceof Duck &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "duckPopulation");
+                    if ((foodSaturation += herbivore.getWeight()) > MAX_FOOD_SATURATION) {
+                        foodSaturation = MAX_FOOD_SATURATION;
+                    } else {
+                        foodSaturation += herbivore.getWeight();
+                    }
+                    return;
+                } else if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "mousePopulation");
                     foodSaturation += herbivore.getWeight();
                     return;
-                } else if (herbivore instanceof Caterpillar &&
+                } else if (herbivore instanceof Rabbit &&
                         EatingChance.isEated(this, herbivore)) {
-                    location.animalLeave(herbivore, "caterpillarPopulation");
-                    foodSaturation += herbivore.getWeight();
+                    location.animalLeave(herbivore, "rabbitPopulation");
+                    foodSaturation += MAX_FOOD_SATURATION;
                     return;
                 }
             }

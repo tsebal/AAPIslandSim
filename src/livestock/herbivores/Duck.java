@@ -66,18 +66,16 @@ public class Duck extends Herbivore implements EatsHerbivores {
 
     @Override
     public void eatHerbivore(List<Herbivore> herbivores) {
-        if (foodSaturation < MAX_FOOD_SATURATION) {
-            for (Herbivore herbivore : herbivores) {
-                if (herbivore instanceof Caterpillar &&
-                        EatingChance.isEated(this, herbivore)) {
-                    location.animalLeave(herbivore, "caterpillarPopulation");
-                    foodSaturation += herbivore.getWeight();
-                    return;
-                }
+        for (Herbivore herbivore : herbivores) {
+            if (herbivore instanceof Caterpillar &&
+                    EatingChance.isEated(this, herbivore)) {
+                location.animalLeave(herbivore, "caterpillarPopulation");
+                foodSaturation += herbivore.getWeight();
+                return;
             }
-            foodSaturation -= 0.05f;
-            isDied();
         }
+        foodSaturation -= 0.05f;
+        isDied();
     }
 
     @Override

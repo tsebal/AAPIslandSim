@@ -29,6 +29,7 @@ public class Location implements Runnable {
         this.islandMap = islandMap;
         this.locationCoordinates = locationCoordinates;
         this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
+        this.maxPopulation.put("maxBoaPopulation", Integer.parseInt(appProp.getProperty("BoaPopulationMax")));
         this.maxPopulation.put("maxBoarPopulation", Integer.parseInt(appProp.getProperty("BoarPopulationMax")));
         this.maxPopulation.put("maxBuffaloPopulation", Integer.parseInt(appProp.getProperty("BuffaloPopulationMax")));
         this.maxPopulation.put("maxCaterpillarPopulation", Integer.parseInt(appProp.getProperty("CaterpillarPopulationMax")));
@@ -83,6 +84,8 @@ public class Location implements Runnable {
     //location livestock initialization
     private void initialize() {
         growPlants();
+        population.put("boaPopulation",
+                initializePredators(Boa.class, maxPopulation.get("maxBoaPopulation")));
         population.put("boarPopulation",
                 initializeHerbivores(Boar.class, maxPopulation.get("maxBoarPopulation")));
         population.put("buffaloPopulation",
@@ -213,7 +216,8 @@ public class Location implements Runnable {
                 " | \uD83D\uDC07Rabbits=" + population.get("rabbitPopulation") +
                 " | \uD83D\uDC11Sheep=" + population.get("sheepPopulation") +
                 "\n\t\t\t    predators=" + predators.size() +
-                ":  \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
+                ":  \uD83D\uDC0DBoas=" + population.get("boaPopulation") +
+                " | \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
                 " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +
                 "\n\t\t\t   \uD83C\uDF3Fplants=" + plants.size() +
                 "}\n";

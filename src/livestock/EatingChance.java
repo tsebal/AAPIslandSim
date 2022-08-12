@@ -1,6 +1,7 @@
 package livestock;
 
 import livestock.herbivores.*;
+import livestock.predators.Boa;
 import livestock.predators.Fox;
 import livestock.predators.Wolf;
 
@@ -14,11 +15,25 @@ public class EatingChance {
 
     public static boolean isEated(Animal eater, Animal victim) {
         boolean result = false;
-        if (eater instanceof Boar) {
+        if (eater instanceof Boa) {
             if (victim instanceof Caterpillar && getRandomChance() <= 90) {
                 result = true;
             }
             if (victim instanceof Mouse && getRandomChance() <= 50) {
+                result = true;
+            }
+        }
+        if (eater instanceof Boar) {
+            if (victim instanceof Duck && getRandomChance() <= 10) {
+                result = true;
+            }
+            if (victim instanceof Fox && getRandomChance() <= 15) {
+                result = true;
+            }
+            if (victim instanceof Rabbit && getRandomChance() <= 20) {
+                result = true;
+            }
+            if (victim instanceof Mouse && getRandomChance() <= 40) {
                 result = true;
             }
         }
@@ -29,10 +44,16 @@ public class EatingChance {
             }
         }
         if (eater instanceof Fox) {
-            if (victim instanceof Mouse && getRandomChance() <= 90) {
+            if (victim instanceof Caterpillar && getRandomChance() <= 40) {
                 result = true;
             }
-            if (victim instanceof Caterpillar && getRandomChance() <= 40) {
+            if (victim instanceof Duck && getRandomChance() <= 60) {
+                result = true;
+            }
+            if (victim instanceof Rabbit && getRandomChance() <= 70) {
+                result = true;
+            }
+            if (victim instanceof Mouse && getRandomChance() <= 90) {
                 result = true;
             }
         }
