@@ -16,14 +16,6 @@ public class EatingChance {
     public static boolean isEated(Animal eater, Animal victim) {
         boolean result = false;
         if (eater instanceof Boa) {
-            if (victim instanceof Caterpillar && getRandomChance() <= 90) {
-                result = true;
-            }
-            if (victim instanceof Mouse && getRandomChance() <= 50) {
-                result = true;
-            }
-        }
-        if (eater instanceof Boar) {
             if (victim instanceof Duck && getRandomChance() <= 10) {
                 result = true;
             }
@@ -34,6 +26,14 @@ public class EatingChance {
                 result = true;
             }
             if (victim instanceof Mouse && getRandomChance() <= 40) {
+                result = true;
+            }
+        }
+        if (eater instanceof Boar) {
+            if (victim instanceof Caterpillar && getRandomChance() <= 90) {
+                result = true;
+            }
+            if (victim instanceof Mouse && getRandomChance() <= 50) {
                 result = true;
             }
         }
