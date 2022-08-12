@@ -17,10 +17,12 @@ public class IslandModel {
         Properties appProp = IslandProp.load();
         int islandRefreshDelayMs = Integer.parseInt(appProp.getProperty("IslandRefreshDelayMs"));
 
-        System.out.println("Welcome to Animal And Plant Island Simulator!");
+        System.out.println(Island.ANSI_GREEN + "Welcome to Animal And Plant Island Simulator!" + Island.ANSI_RESET);
         System.out.println("Island model dimensions: " +
-                appProp.getProperty("IslandSizeX") + "X" +
+                appProp.getProperty("IslandSizeX") + " X " +
                 appProp.getProperty("IslandSizeY"));
+        System.out.println("Island model refresh delay, ms: " + islandRefreshDelayMs);
+        System.out.println("Number of Island handlers: " + appProp.getProperty("NumOfIslandHandlers"));
         System.out.println("You can change the parameters of the island model in the app.properties settings file.");
         System.out.println("Press Enter to continue...");
         System.in.read();

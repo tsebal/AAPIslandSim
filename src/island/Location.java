@@ -29,11 +29,17 @@ public class Location implements Runnable {
         this.islandMap = islandMap;
         this.locationCoordinates = locationCoordinates;
         this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
+        this.maxPopulation.put("maxBoarPopulation", Integer.parseInt(appProp.getProperty("BoarPopulationMax")));
+        this.maxPopulation.put("maxBuffaloPopulation", Integer.parseInt(appProp.getProperty("BuffaloPopulationMax")));
         this.maxPopulation.put("maxCaterpillarPopulation", Integer.parseInt(appProp.getProperty("CaterpillarPopulationMax")));
         this.maxPopulation.put("maxDeerPopulation", Integer.parseInt(appProp.getProperty("DeerPopulationMax")));
         this.maxPopulation.put("maxDuckPopulation", Integer.parseInt(appProp.getProperty("DuckPopulationMax")));
         this.maxPopulation.put("maxFoxPopulation", Integer.parseInt(appProp.getProperty("FoxPopulationMax")));
+        this.maxPopulation.put("maxGoatPopulation", Integer.parseInt(appProp.getProperty("GoatPopulationMax")));
+        this.maxPopulation.put("maxHorsePopulation", Integer.parseInt(appProp.getProperty("HorsePopulationMax")));
         this.maxPopulation.put("maxMousePopulation", Integer.parseInt(appProp.getProperty("MousePopulationMax")));
+        this.maxPopulation.put("maxRabbitPopulation", Integer.parseInt(appProp.getProperty("RabbitPopulationMax")));
+        this.maxPopulation.put("maxSheepPopulation", Integer.parseInt(appProp.getProperty("SheepPopulationMax")));
         this.maxPopulation.put("maxWolfPopulation", Integer.parseInt(appProp.getProperty("WolfPopulationMax")));
         initialize();
     }
@@ -77,6 +83,10 @@ public class Location implements Runnable {
     //location livestock initialization
     private void initialize() {
         growPlants();
+        population.put("boarPopulation",
+                initializeHerbivores(Boar.class, maxPopulation.get("maxBoarPopulation")));
+        population.put("buffaloPopulation",
+                initializeHerbivores(Buffalo.class, maxPopulation.get("maxBuffaloPopulation")));
         population.put("caterpillarPopulation",
                 initializeHerbivores(Caterpillar.class, maxPopulation.get("maxCaterpillarPopulation")));
         population.put("deerPopulation",
@@ -85,8 +95,16 @@ public class Location implements Runnable {
                 initializeHerbivores(Duck.class, maxPopulation.get("maxDuckPopulation")));
         population.put("foxPopulation",
                 initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation")));
+        population.put("goatPopulation",
+                initializeHerbivores(Goat.class, maxPopulation.get("maxGoatPopulation")));
+        population.put("horsePopulation",
+                initializeHerbivores(Horse.class, maxPopulation.get("maxHorsePopulation")));
         population.put("mousePopulation",
                 initializeHerbivores(Mouse.class, maxPopulation.get("maxMousePopulation")));
+        population.put("rabbitPopulation",
+                initializeHerbivores(Rabbit.class, maxPopulation.get("maxRabbitPopulation")));
+        population.put("sheepPopulation",
+                initializeHerbivores(Sheep.class, maxPopulation.get("maxSheepPopulation")));
         population.put("wolfPopulation",
                 initializePredators(Wolf.class, maxPopulation.get("maxWolfPopulation")));
     }
@@ -184,12 +202,18 @@ public class Location implements Runnable {
     public String toString() {
         return " location: " +
                 "herbivores=" + herbivores.size() +
-                ":  \uD83D\uDC1BCaterplr=" + population.get("caterpillarPopulation") +
+                ": \uD83D\uDC17Boars=" + population.get("boarPopulation") +
+                " | \uD83D\uDC03Buffalo=" + population.get("buffaloPopulation") +
+                " | \uD83D\uDC1BCaterplr=" + population.get("caterpillarPopulation") +
                 " | \uD83E\uDD8CDeers=" + population.get("deerPopulation") +
-                " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
                 " | \uD83E\uDD86Ducks=" + population.get("duckPopulation") +
+                " | \uD83D\uDC10Goats=" + population.get("goatPopulation") +
+                " | \uD83D\uDC0EHorses=" + population.get("horsePopulation") +
+                " | \uD83D\uDC01Mouses=" + population.get("mousePopulation") +
+                " | \uD83D\uDC07Rabbits=" + population.get("rabbitPopulation") +
+                " | \uD83D\uDC11Sheep=" + population.get("sheepPopulation") +
                 "\n\t\t\t    predators=" + predators.size() +
-                ": \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
+                ":  \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
                 " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +
                 "\n\t\t\t   \uD83C\uDF3Fplants=" + plants.size() +
                 "}\n";

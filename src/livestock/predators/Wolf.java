@@ -3,16 +3,12 @@ package livestock.predators;
 import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
-import livestock.herbivores.Deer;
-import livestock.herbivores.Duck;
-import livestock.herbivores.Herbivore;
-import livestock.herbivores.Mouse;
+import livestock.herbivores.*;
 
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-// Wolf chance eats: Horse 10%, Deer 15%, Rabbit 60%, Mouse 80%, Goat 60%, Sheep 70%, Boar 15%, Buffalo 10%, Duck 40%
 public class Wolf extends Predator {
     private Location location;
     private static int WEIGHT;
@@ -52,7 +48,17 @@ public class Wolf extends Predator {
     public void eat(List<Herbivore> herbivores) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
             for (Herbivore herbivore : herbivores) {
-                if (herbivore instanceof Deer &&
+                if (herbivore instanceof Boar &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "boarPopulation");
+                    foodSaturation = MAX_FOOD_SATURATION;
+                    return;
+                } else if (herbivore instanceof Buffalo &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "buffaloPopulation");
+                    foodSaturation = MAX_FOOD_SATURATION;
+                    return;
+                } else if (herbivore instanceof Deer &&
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "deerPopulation");
                     foodSaturation = MAX_FOOD_SATURATION;
@@ -62,10 +68,30 @@ public class Wolf extends Predator {
                     location.animalLeave(herbivore, "duckPopulation");
                     foodSaturation += herbivore.getWeight();
                     return;
+                }  else if (herbivore instanceof Goat &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "goatPopulation");
+                    foodSaturation = MAX_FOOD_SATURATION;
+                    return;
+                } else if (herbivore instanceof Horse &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "horsePopulation");
+                    foodSaturation += MAX_FOOD_SATURATION;
+                    return;
                 } else if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "mousePopulation");
                     foodSaturation += herbivore.getWeight();
+                    return;
+                } else if (herbivore instanceof Rabbit &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "rabbitPopulation");
+                    foodSaturation += herbivore.getWeight();
+                    return;
+                } else if (herbivore instanceof Sheep &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "sheepPopulation");
+                    foodSaturation = MAX_FOOD_SATURATION;
                     return;
                 }
             }

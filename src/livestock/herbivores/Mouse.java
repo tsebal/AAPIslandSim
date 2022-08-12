@@ -1,6 +1,7 @@
 package livestock.herbivores;
 
 import island.Location;
+import livestock.EatingChance;
 import livestock.MoveDirection;
 import livestock.Plant;
 
@@ -8,8 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
-//Mouse chance eats: Caterpillar 90%, Plant 100%
-public class Mouse extends Herbivore {
+public class Mouse extends Herbivore implements EatsHerbivores {
     private Location location;
     private static float WEIGHT;
     private static int MAX_AREA_MOVE_SPEED;
@@ -47,13 +47,36 @@ public class Mouse extends Herbivore {
     @Override
     public void eat(List<Plant> plant) {
         if (foodSaturation < MAX_FOOD_SATURATION) {
-            if (!plant.isEmpty()) {
-                plant.remove(0);
-                foodSaturation = MAX_FOOD_SATURATION;
-            } else {
-                foodSaturation -= 0.005f;
-                isDied();
+            int mouseChoosesFood = ThreadLocalRandom.current().nextInt(2);
+
+            switch (mouseChoosesFood) {
+                case 0 -> {
+                    if (!plant.isEmpty()) {
+                        plant.remove(0);
+                        foodSaturation = MAX_FOOD_SATURATION;
+                    }
+                }
+                case 1 -> eatHerbivore(location.getHerbivores());
             }
+        } else {
+            foodSaturation -= 0.005f;
+            isDied();
+        }
+    }
+
+    @Override
+    public void eatHerbivore(List<Herbivore> herbivores) {
+        if (foodSaturation < MAX_FOOD_SATURATION) {
+            for (Herbivore herbivore : herbivores) {
+                if (herbivore instanceof Caterpillar &&
+                        EatingChance.isEated(this, herbivore)) {
+                    location.animalLeave(herbivore, "caterpillarPopulation");
+                    foodSaturation += herbivore.getWeight();
+                    return;
+                }
+            }
+            foodSaturation -= 0.005f;
+            isDied();
         }
     }
 
