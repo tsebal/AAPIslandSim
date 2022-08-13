@@ -76,7 +76,7 @@ public class Wolf extends Predator {
                 } else if (herbivore instanceof Horse &&
                         EatingChance.isEated(this, herbivore)) {
                     location.animalLeave(herbivore, "horsePopulation");
-                    foodSaturation += MAX_FOOD_SATURATION;
+                    foodSaturation = MAX_FOOD_SATURATION;
                     return;
                 } else if (herbivore instanceof Mouse &&
                         EatingChance.isEated(this, herbivore)) {

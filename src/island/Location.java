@@ -29,12 +29,14 @@ public class Location implements Runnable {
         this.islandMap = islandMap;
         this.locationCoordinates = locationCoordinates;
         this.maxPopulation.put("maxPlantPopulation", Integer.parseInt(appProp.getProperty("PlantPopulationMax")));
+        this.maxPopulation.put("maxBearPopulation", Integer.parseInt(appProp.getProperty("BearPopulationMax")));
         this.maxPopulation.put("maxBoaPopulation", Integer.parseInt(appProp.getProperty("BoaPopulationMax")));
         this.maxPopulation.put("maxBoarPopulation", Integer.parseInt(appProp.getProperty("BoarPopulationMax")));
         this.maxPopulation.put("maxBuffaloPopulation", Integer.parseInt(appProp.getProperty("BuffaloPopulationMax")));
         this.maxPopulation.put("maxCaterpillarPopulation", Integer.parseInt(appProp.getProperty("CaterpillarPopulationMax")));
         this.maxPopulation.put("maxDeerPopulation", Integer.parseInt(appProp.getProperty("DeerPopulationMax")));
         this.maxPopulation.put("maxDuckPopulation", Integer.parseInt(appProp.getProperty("DuckPopulationMax")));
+        this.maxPopulation.put("maxEaglePopulation", Integer.parseInt(appProp.getProperty("EaglePopulationMax")));
         this.maxPopulation.put("maxFoxPopulation", Integer.parseInt(appProp.getProperty("FoxPopulationMax")));
         this.maxPopulation.put("maxGoatPopulation", Integer.parseInt(appProp.getProperty("GoatPopulationMax")));
         this.maxPopulation.put("maxHorsePopulation", Integer.parseInt(appProp.getProperty("HorsePopulationMax")));
@@ -84,6 +86,8 @@ public class Location implements Runnable {
     //location livestock initialization
     private void initialize() {
         growPlants();
+        population.put("bearPopulation",
+                initializePredators(Bear.class, maxPopulation.get("maxBearPopulation")));
         population.put("boaPopulation",
                 initializePredators(Boa.class, maxPopulation.get("maxBoaPopulation")));
         population.put("boarPopulation",
@@ -96,6 +100,8 @@ public class Location implements Runnable {
                 initializeHerbivores(Deer.class, maxPopulation.get("maxDeerPopulation")));
         population.put("duckPopulation",
                 initializeHerbivores(Duck.class, maxPopulation.get("maxDuckPopulation")));
+        population.put("eaglePopulation",
+                initializePredators(Eagle.class, maxPopulation.get("maxEaglePopulation")));
         population.put("foxPopulation",
                 initializePredators(Fox.class, maxPopulation.get("maxFoxPopulation")));
         population.put("goatPopulation",
@@ -143,7 +149,7 @@ public class Location implements Runnable {
     @Override
     public void run() {
         ThreadLocalRandom animalCase = ThreadLocalRandom.current();
-        //predators randomly eats/moves/breeds
+
         for (int i = 0; i < predators.size(); i++) {
             Predator predator = predators.get(i);
 
@@ -158,7 +164,6 @@ public class Location implements Runnable {
             }
         }
 
-        //herbivores randomly eats/moves/breeds
         for (int i = 0; i < herbivores.size(); i++) {
             Herbivore herbivore = herbivores.get(i);
 
@@ -216,7 +221,9 @@ public class Location implements Runnable {
                 " | \uD83D\uDC07Rabbits=" + population.get("rabbitPopulation") +
                 " | \uD83D\uDC11Sheep=" + population.get("sheepPopulation") +
                 "\n\t\t\t    predators=" + predators.size() +
-                ":  \uD83D\uDC0DBoas=" + population.get("boaPopulation") +
+                ":  \uD83D\uDC3BBears=" + population.get("bearPopulation") +
+                " | \uD83D\uDC0DBoas=" + population.get("boaPopulation") +
+                " | \uD83E\uDD85Eagles=" + population.get("eaglePopulation") +
                 " | \uD83E\uDD8AFoxes=" + population.get("foxPopulation") +
                 " | \uD83D\uDC3AWolves=" + population.get("wolfPopulation") +
                 "\n\t\t\t   \uD83C\uDF3Fplants=" + plants.size() +

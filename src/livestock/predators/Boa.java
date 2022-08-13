@@ -51,28 +51,26 @@ public class Boa extends Predator implements EatsPredators {
 
             switch (boaChoosesFood) {
                 case 0 -> {
-                    if (foodSaturation < MAX_FOOD_SATURATION) {
-                        for (Herbivore herbivore : herbivores) {
-                            if (herbivore instanceof Duck &&
-                                    EatingChance.isEated(this, herbivore)) {
-                                location.animalLeave(herbivore, "duckPopulation");
+                    for (Herbivore herbivore : herbivores) {
+                        if (herbivore instanceof Duck &&
+                                EatingChance.isEated(this, herbivore)) {
+                            location.animalLeave(herbivore, "duckPopulation");
+                            foodSaturation += herbivore.getWeight();
+                            return;
+                        } else if (herbivore instanceof Mouse &&
+                                EatingChance.isEated(this, herbivore)) {
+                            location.animalLeave(herbivore, "mousePopulation");
+                            foodSaturation += herbivore.getWeight();
+                            return;
+                        } else if (herbivore instanceof Rabbit &&
+                                EatingChance.isEated(this, herbivore)) {
+                            location.animalLeave(herbivore, "rabbitPopulation");
+                            if ((foodSaturation += herbivore.getWeight()) > MAX_FOOD_SATURATION) {
+                                foodSaturation = MAX_FOOD_SATURATION;
+                            } else {
                                 foodSaturation += herbivore.getWeight();
-                                return;
-                            } else if (herbivore instanceof Mouse &&
-                                    EatingChance.isEated(this, herbivore)) {
-                                location.animalLeave(herbivore, "mousePopulation");
-                                foodSaturation += herbivore.getWeight();
-                                return;
-                            } else if (herbivore instanceof Rabbit &&
-                                    EatingChance.isEated(this, herbivore)) {
-                                location.animalLeave(herbivore, "rabbitPopulation");
-                                if ((foodSaturation += herbivore.getWeight()) > MAX_FOOD_SATURATION) {
-                                    foodSaturation = MAX_FOOD_SATURATION;
-                                } else {
-                                    foodSaturation += herbivore.getWeight();
-                                }
-                                return;
                             }
+                            return;
                         }
                     }
                 }
@@ -86,16 +84,16 @@ public class Boa extends Predator implements EatsPredators {
 
     @Override
     public void eatPredator(List<Predator> predators) {
-            for (Predator predator : predators) {
-                if (predator instanceof Fox &&
-                        EatingChance.isEated(this, predator)) {
-                    location.animalLeave(predator, "foxPopulation");
-                    foodSaturation = MAX_FOOD_SATURATION;
-                    return;
-                }
+        for (Predator predator : predators) {
+            if (predator instanceof Fox &&
+                    EatingChance.isEated(this, predator)) {
+                location.animalLeave(predator, "foxPopulation");
+                foodSaturation = MAX_FOOD_SATURATION;
+                return;
             }
-            foodSaturation -= 0.75f;
-            isDied();
+        }
+        foodSaturation -= 0.75f;
+        isDied();
     }
 
     @Override

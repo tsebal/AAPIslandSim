@@ -1,9 +1,7 @@
 package livestock;
 
 import livestock.herbivores.*;
-import livestock.predators.Boa;
-import livestock.predators.Fox;
-import livestock.predators.Wolf;
+import livestock.predators.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,6 +13,32 @@ public class EatingChance {
 
     public static boolean isEated(Animal eater, Animal victim) {
         boolean result = false;
+        if (eater instanceof Bear) {
+            if (victim instanceof Duck && getRandomChance() <= 10) {
+                result = true;
+            }
+            if (victim instanceof Buffalo && getRandomChance() <= 20) {
+                result = true;
+            }
+            if (victim instanceof Horse && getRandomChance() <= 40) {
+                result = true;
+            }
+            if (victim instanceof Boar && getRandomChance() <= 50) {
+                result = true;
+            }
+            if ((victim instanceof Goat || victim instanceof Sheep)
+                    && getRandomChance() <= 70) {
+                result = true;
+            }
+            if ((victim instanceof Boa || victim instanceof Deer || victim instanceof Rabbit)
+                    && getRandomChance() <= 80) {
+                result = true;
+            }
+            if (victim instanceof Mouse && getRandomChance() <= 90) {
+                result = true;
+            }
+        }
+
         if (eater instanceof Boa) {
             if (victim instanceof Duck && getRandomChance() <= 10) {
                 result = true;
@@ -29,6 +53,7 @@ public class EatingChance {
                 result = true;
             }
         }
+
         if (eater instanceof Boar) {
             if (victim instanceof Caterpillar && getRandomChance() <= 90) {
                 result = true;
@@ -37,12 +62,27 @@ public class EatingChance {
                 result = true;
             }
         }
+
         if ((eater instanceof Duck || eater instanceof Mouse)
                 && victim instanceof Caterpillar) {
             if (getRandomChance() <= 90) {
                 result = true;
             }
         }
+
+        if (eater instanceof Eagle) {
+            if (victim instanceof Fox && getRandomChance() <= 10) {
+                result = true;
+            }
+            if (victim instanceof Duck && getRandomChance() <= 80) {
+                result = true;
+            }
+            if ((victim instanceof Rabbit || victim instanceof Mouse)
+                    && getRandomChance() <= 90) {
+                result = true;
+            }
+        }
+
         if (eater instanceof Fox) {
             if (victim instanceof Caterpillar && getRandomChance() <= 40) {
                 result = true;
@@ -57,6 +97,7 @@ public class EatingChance {
                 result = true;
             }
         }
+
         if (eater instanceof Wolf) {
             if ((victim instanceof Buffalo || victim instanceof Horse)
                     && getRandomChance() <= 10) {
@@ -80,6 +121,7 @@ public class EatingChance {
                 result = true;
             }
         }
+
         return result;
     }
 

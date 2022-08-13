@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Island class initializes the entire island with the given parameters.
- * Retrieves the Island dimensions into the constructor
+ * Retrieves the Island properties into the constructor, init, run and print information.
  */
 public class Island implements Runnable {
     public static final String ANSI_GREEN = "\u001B[32m";

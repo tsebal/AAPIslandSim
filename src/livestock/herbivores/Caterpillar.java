@@ -62,7 +62,6 @@ public class Caterpillar extends Herbivore {
             Caterpillar newCaterpillar = new Caterpillar(location);
             newCaterpillar.setIsMoved(true);
             location.animalArrive(newCaterpillar, "caterpillarPopulation");
-            isDied();
         }
     }
 
