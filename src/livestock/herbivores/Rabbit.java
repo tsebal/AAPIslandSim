@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Island;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
@@ -9,22 +10,26 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Rabbit extends Herbivore {
+    private static final int WEIGHT;
+    private static final int MAX_AREA_MOVE_SPEED;
+    private static final float MAX_FOOD_SATURATION;
+    private static final int BREED_FACTOR;
+
     private Location location;
-    private static int WEIGHT;
-    private static int MAX_AREA_MOVE_SPEED;
-    private static float MAX_FOOD_SATURATION;
-    private static int BREED_FACTOR;
     private float foodSaturation;
     private boolean isMoved;
 
-    public Rabbit(Location location) {
-        this.location = location;
-        Properties appProp = location.getAppProp();
+    static {
+        Properties appProp = Island.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("RabbitWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("RabbitAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("RabbitFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("RabbitBreedFactor"));
-        this.foodSaturation = Float.parseFloat(appProp.getProperty("RabbitFoodSaturation"));
+    }
+
+    public Rabbit(Location location) {
+        this.location = location;
+        this.foodSaturation = Float.parseFloat(Island.getAppProp().getProperty("RabbitFoodSaturation"));
         this.isMoved = false;
     }
 

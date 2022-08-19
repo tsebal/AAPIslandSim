@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Island;
 import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
@@ -10,22 +11,26 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Mouse extends Herbivore implements EatsHerbivores {
+    private static final float WEIGHT;
+    private static final int MAX_AREA_MOVE_SPEED;
+    private static final float MAX_FOOD_SATURATION;
+    private static final int BREED_FACTOR;
+
     private Location location;
-    private static float WEIGHT;
-    private static int MAX_AREA_MOVE_SPEED;
-    private static float MAX_FOOD_SATURATION;
-    private static int BREED_FACTOR;
     private float foodSaturation;
     private boolean isMoved;
 
-    public Mouse(Location location) {
-        this.location = location;
-        Properties appProp = location.getAppProp();
+    static {
+        Properties appProp = Island.getAppProp();
         WEIGHT = Float.parseFloat(appProp.getProperty("MouseWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("MouseAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("MouseFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("MouseBreedFactor"));
-        this.foodSaturation = Float.parseFloat(appProp.getProperty("MouseFoodSaturation"));
+    }
+
+    public Mouse(Location location) {
+        this.location = location;
+        this.foodSaturation = Float.parseFloat(Island.getAppProp().getProperty("MouseFoodSaturation"));
         this.isMoved = false;
     }
 

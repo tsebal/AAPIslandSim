@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Island;
 import island.Location;
 import livestock.EatingChance;
 import livestock.MoveDirection;
@@ -10,22 +11,26 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Duck extends Herbivore implements EatsHerbivores {
+    private static final int WEIGHT;
+    private static final int MAX_AREA_MOVE_SPEED;
+    private static final float MAX_FOOD_SATURATION;
+    private static final int BREED_FACTOR;
+
     private Location location;
-    private static int WEIGHT;
-    private static int MAX_AREA_MOVE_SPEED;
-    private static float MAX_FOOD_SATURATION;
-    private static int BREED_FACTOR;
     private float foodSaturation;
     private boolean isMoved;
 
-    public Duck(Location location) {
-        this.location = location;
-        Properties appProp = location.getAppProp();
+    static {
+        Properties appProp = Island.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("DuckWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("DuckAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Float.parseFloat(appProp.getProperty("DuckFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("DuckBreedFactor"));
-        this.foodSaturation = Float.parseFloat(appProp.getProperty("DuckFoodSaturation"));
+    }
+
+    public Duck(Location location) {
+        this.location = location;
+        this.foodSaturation = Float.parseFloat(Island.getAppProp().getProperty("DuckFoodSaturation"));
         this.isMoved = false;
     }
 

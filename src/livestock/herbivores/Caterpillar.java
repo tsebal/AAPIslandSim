@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Island;
 import island.Location;
 import livestock.Plant;
 
@@ -7,16 +8,20 @@ import java.util.List;
 import java.util.Properties;
 
 public class Caterpillar extends Herbivore {
+    private static final float WEIGHT;
+    private static final int BREED_FACTOR;
+
     private final Location location;
-    private static float WEIGHT;
-    private static int BREED_FACTOR;
     private boolean isMoved;
+
+    static {
+        Properties appProp = Island.getAppProp();
+        WEIGHT = Float.parseFloat(appProp.getProperty("CaterpillarWeight"));
+        BREED_FACTOR = Integer.parseInt(appProp.getProperty("CaterpillarBreedFactor"));
+    }
 
     public Caterpillar(Location location) {
         this.location = location;
-        Properties appProp = location.getAppProp();
-        WEIGHT = Float.parseFloat(appProp.getProperty("CaterpillarWeight"));
-        BREED_FACTOR = Integer.parseInt(appProp.getProperty("CaterpillarBreedFactor"));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package livestock.herbivores;
 
+import island.Island;
 import island.Location;
 import livestock.MoveDirection;
 import livestock.Plant;
@@ -9,22 +10,26 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Deer extends Herbivore {
+    private static final int WEIGHT;
+    private static final int MAX_AREA_MOVE_SPEED;
+    private static final int MAX_FOOD_SATURATION;
+    private static final int BREED_FACTOR;
+
     private Location location;
-    private static int WEIGHT;
-    private static int MAX_AREA_MOVE_SPEED;
-    private static int MAX_FOOD_SATURATION;
-    private static int BREED_FACTOR;
     private int foodSaturation;
     private boolean isMoved;
 
-    public Deer(Location location) {
-        this.location = location;
-        Properties appProp = location.getAppProp();
+    static {
+        Properties appProp = Island.getAppProp();
         WEIGHT = Integer.parseInt(appProp.getProperty("DeerWeight"));
         MAX_AREA_MOVE_SPEED = Integer.parseInt(appProp.getProperty("DeerAreaMoveSpeed"));
         MAX_FOOD_SATURATION = Integer.parseInt(appProp.getProperty("DeerFoodSaturationMax"));
         BREED_FACTOR = Integer.parseInt(appProp.getProperty("DeerBreedFactor"));
-        this.foodSaturation = Integer.parseInt(appProp.getProperty("DeerFoodSaturation"));
+    }
+
+    public Deer(Location location) {
+        this.location = location;
+        this.foodSaturation = Integer.parseInt(Island.getAppProp().getProperty("DeerFoodSaturation"));
         this.isMoved = false;
     }
 

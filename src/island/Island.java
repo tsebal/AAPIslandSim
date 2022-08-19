@@ -11,17 +11,21 @@ import java.util.concurrent.Executors;
 public class Island implements Runnable {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
+    private static Properties appProp;
 
-    private final Properties appProp;
     private final Location[][] islandMap;
     private final ExecutorService executor;
     private int daysCounter = 1;
 
     public Island(Properties appProp) {
-        this.appProp = appProp;
+        Island.appProp = appProp;
         this.islandMap = new Location[Integer.parseInt(appProp.getProperty("IslandSizeX"))]
                 [Integer.parseInt(appProp.getProperty("IslandSizeY"))];
         this.executor = Executors.newFixedThreadPool(Integer.parseInt(appProp.getProperty("NumOfIslandHandlers")));
+    }
+
+    public static Properties getAppProp() {
+        return appProp;
     }
 
     public void initialize() {
@@ -29,7 +33,7 @@ public class Island implements Runnable {
         for (int i = 0; i < islandMap.length; i++) {
             for (int j = 0; j < islandMap[i].length; j++) {
                 locationCoordinates = new int[]{i, j};
-                islandMap[i][j] = new Location(appProp, islandMap, locationCoordinates);
+                islandMap[i][j] = new Location(islandMap, locationCoordinates);
             }
         }
         System.out.println(ANSI_GREEN + "Day 1: " + ANSI_RESET +
